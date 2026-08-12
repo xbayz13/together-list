@@ -20,6 +20,12 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 /* Modal animation */
 .animate-in {
   animation: modalIn 0.25s ease-out;
