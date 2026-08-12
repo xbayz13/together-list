@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FFF8F0;
+  --color-card: #FFFFFF;
+  --color-accent: #A8D8EA;
+  --color-accentHover: #8EC5D6;
+  --color-textMain: #2D2D2D;
+  --color-textMuted: #6B7280;
+  --color-badgeIde: #A8D8EA;
+  --color-badgeDijadwalin: #F9E79F;
+  --color-badgeDone: #A9DFBF;
+  --color-badgeBatal: #D5D8DC;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-shadow: rgba(0, 0, 0, 0.06);
+  --font-sans: var(--font-nunito);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
