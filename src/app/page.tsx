@@ -7,6 +7,7 @@ import MobileTabs from "./components/MobileTabs";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null);
 
   return (
     <>
@@ -17,7 +18,12 @@ export default function Home() {
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
         />
-        <ListPanel />
+        <ListPanel
+          activities={[]}
+          selectedDate={selectedDate}
+          onSelectActivity={(a) => setSelectedActivityId(a.id)}
+          selectedActivityId={selectedActivityId}
+        />
       </div>
 
       {/* Mobile */}
@@ -25,7 +31,12 @@ export default function Home() {
         {(tab) => (
           <div className="p-4">
             {tab === "list" ? (
-              <ListPanel />
+              <ListPanel
+                activities={[]}
+                selectedDate={selectedDate}
+                onSelectActivity={(a) => setSelectedActivityId(a.id)}
+                selectedActivityId={selectedActivityId}
+              />
             ) : (
               <CalendarPanel
                 activities={[]}
