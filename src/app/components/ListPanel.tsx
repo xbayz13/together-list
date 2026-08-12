@@ -37,7 +37,6 @@ export default function ListPanel({ activities, selectedDate, onSelectActivity, 
     <main className="w-full md:w-[65%] flex flex-col gap-5">
       {/* Hero Header */}
       <div className="text-center md:text-left mb-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Bayoong & Hiyori</p>
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-textMain leading-tight">
           Things we should do <span className="text-accent">together</span>
         </h1>
