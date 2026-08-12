@@ -35,15 +35,30 @@ export default function ListPanel({ activities, selectedDate, onSelectActivity, 
 
   return (
     <main className="w-full md:w-[65%] flex flex-col gap-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-textMain">Together List</h1>
-          <p className="text-sm text-textMuted mt-0.5">Bucket list bareng</p>
+      {/* Hero Header */}
+      <div className="text-center md:text-left mb-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent mb-2">Bayoong & Hiyori</p>
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-textMain leading-tight">
+          Things we should do <span className="text-accent">together</span>
+        </h1>
+        <p className="text-sm text-textMuted mt-2 max-w-md">
+          Semua ide, rencana, dan mimpi yang mau kita wujudkan bareng.
+        </p>
+      </div>
+
+      {/* Stats bar */}
+      <div className="flex items-center gap-6 px-4 py-3 card-glass rounded-2xl">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-badgeIde" />
+          <span className="text-sm text-textMuted">{activities.filter(a => a.status === "IDE").length} Ide</span>
         </div>
-        <div className="text-right">
-          <p className="text-3xl font-bold text-accent">{activities.length}</p>
-          <p className="text-xs text-textMuted">aktivitas</p>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-badgeDijadwalin" />
+          <span className="text-sm text-textMuted">{activities.filter(a => a.status === "DIJADKANIN").length} Dijadwalin</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-badgeDone" />
+          <span className="text-sm text-textMuted">{activities.filter(a => a.status === "DONE").length} Done</span>
         </div>
       </div>
 
