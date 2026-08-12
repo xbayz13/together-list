@@ -194,3 +194,99 @@ body::before {
 .sticker-pulse:hover {
   animation: stickerPulse 0.6s ease-in-out;
 }
+
+/* =======================
+   Moving Clouds Animation
+   ======================= */
+
+.cloud {
+  position: absolute;
+  top: var(--top, 50%);
+  left: 0;
+  width: var(--cloud-width, 200px);
+  opacity: var(--cloud-opacity, 0.25);
+  will-change: transform;
+  animation: cloudDrift var(--cloud-duration, 25s) var(--cloud-delay, 0s) linear infinite;
+}
+
+/* Cloud 1 — kecil, cepat, foreground */
+.cloud-1 {
+  --cloud-width: 300px;
+  --cloud-duration: 15s;
+  --cloud-delay: 0s;
+  --top: 8%;
+  --cloud-opacity: 0.70;
+}
+
+/* Cloud 2 — sedang, sedang */
+.cloud-2 {
+  --cloud-width: 510px;
+  --cloud-duration: 22s;
+  --cloud-delay: 3s;
+  --top: 25%;
+  --cloud-opacity: 0.68;
+}
+
+/* Cloud 3 — besar, lambat, background */
+.cloud-3 {
+  --cloud-width: 900px;
+  --cloud-duration: 30s;
+  --cloud-delay: 1s;
+  --top: 50%;
+  --cloud-opacity: 0.65;
+}
+
+/* Cloud 4 — kecil, cepat */
+.cloud-4 {
+  --cloud-width: 270px;
+  --cloud-duration: 18s;
+  --cloud-delay: 6s;
+  --top: 15%;
+  --cloud-opacity: 0.72;
+}
+
+/* Cloud 5 — sedang-besar, paling lambat */
+.cloud-5 {
+  --cloud-width: 690px;
+  --cloud-duration: 35s;
+  --cloud-delay: 4s;
+  --top: 70%;
+  --cloud-opacity: 0.66;
+}
+
+@keyframes cloudDrift {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(calc(100vw + 120%));
+  }
+}
+
+/* Responsive: smaller clouds on mobile */
+@media (max-width: 768px) {
+  .cloud-1 {
+    --cloud-width: 210px;
+    --cloud-duration: 12s;
+  }
+
+  .cloud-2 {
+    --cloud-width: 360px;
+    --cloud-duration: 18s;
+  }
+
+  .cloud-3 {
+    --cloud-width: 540px;
+    --cloud-duration: 25s;
+  }
+
+  .cloud-4 {
+    --cloud-width: 180px;
+    --cloud-duration: 14s;
+  }
+
+  .cloud-5 {
+    --cloud-width: 420px;
+    --cloud-duration: 28s;
+  }
+}

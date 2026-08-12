@@ -8,6 +8,7 @@ import ActivityModal from "./components/ActivityModal";
 import FloatingActionButton from "./components/FloatingActionButton";
 import MobileTabs from "./components/MobileTabs";
 import Toast from "./components/Toast";
+import MovingClouds from "./components/MovingClouds";
 
 export default function Home() {
   const [activities, setActivities] = useState<ActivityData[]>([]);
@@ -79,8 +80,11 @@ export default function Home() {
 
   return (
     <>
+      {/* Moving Clouds Background */}
+      <MovingClouds />
+
       {/* Desktop */}
-      <div className="hidden md:flex min-h-screen items-center justify-center px-6 py-10">
+      <div className="hidden md:flex min-h-screen items-center justify-center px-6 py-10 relative" style={{ zIndex: 2 }}>
         <div className="w-full max-w-[70vw] flex gap-6">
           {calendarContent}
           {listContent}
@@ -88,29 +92,39 @@ export default function Home() {
       </div>
 
       {/* Mobile */}
-      <MobileTabs>
-        {(tab) => (
-          <div className="p-4">
-            {tab === "list" ? listContent : calendarContent}
-          </div>
-        )}
-      </MobileTabs>
+      <div className="relative" style={{ zIndex: 2 }}>
+        <MobileTabs>
+          {(tab) => (
+            <div className="p-4">
+              {tab === "list" ? listContent : calendarContent}
+            </div>
+          )}
+        </MobileTabs>
+      </div>
 
       {/* FAB */}
-      <FloatingActionButton onClick={() => setModal({ mode: "add" })} />
+      <div className="relative" style={{ zIndex: 50 }}>
+        <FloatingActionButton onClick={() => setModal({ mode: "add" })} />
+      </div>
 
       {/* Modal */}
       {modal && (
-        <ActivityModal
-          mode={modal.mode}
-          activity={modal.activity || null}
-          onClose={() => setModal(null)}
-          onSaved={handleSaved}
-        />
+        <div className="relative" style={{ zIndex: 100 }}>
+          <ActivityModal
+            mode={modal.mode}
+            activity={modal.activity || null}
+            onClose={() => setModal(null)}
+            onSaved={handleSaved}
+          />
+        </div>
       )}
 
       {/* Toast */}
-      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+      {toast && (
+        <div className="relative" style={{ zIndex: 100 }}>
+          <Toast message={toast} onClose={() => setToast(null)} />
+        </div>
+      )}
     </>
   );
 }
