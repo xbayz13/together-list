@@ -56,10 +56,10 @@ export default function ListPanel({ activities, selectedDate, onSelectActivity, 
   const progress = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
 
   return (
-    <main className="w-full md:w-[65%] flex flex-col gap-5">
+    <main className="w-full md:w-[65%] flex flex-col gap-4 md:gap-5">
       {/* Hero Header */}
-      <div className="text-center md:text-left mb-2">
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-textMain leading-tight">
+      <div className="text-left mb-2">
+        <h1 className="text-[42px] md:text-5xl font-extrabold tracking-tight text-textMain leading-tight" style={{ textShadow: "3px 3px 0 #9A9A9A, 6px 6px 0 #D8D8D8" }}>
           Things we should do <span className="text-accent">together</span>
         </h1>
         <p className="text-sm text-textMuted mt-2 max-w-md">
