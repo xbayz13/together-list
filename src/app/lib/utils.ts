@@ -93,5 +93,5 @@ export function getStickerEmoji(title: string): string {
   for (const [keyword, emoji] of Object.entries(STICKER_KEYWORDS)) {
     if (lower.includes(keyword)) return emoji;
   }
-  return "💕"; // default sticker
+  return "⭐"; // default sticker
 }

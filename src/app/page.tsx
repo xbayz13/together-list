@@ -80,9 +80,11 @@ export default function Home() {
   return (
     <>
       {/* Desktop */}
-      <div className="hidden md:flex gap-6 p-6 min-h-screen">
-        {calendarContent}
-        {listContent}
+      <div className="hidden md:flex min-h-screen items-center justify-center px-6 py-10">
+        <div className="w-full max-w-[70vw] flex gap-6">
+          {calendarContent}
+          {listContent}
+        </div>
       </div>
 
       {/* Mobile */}

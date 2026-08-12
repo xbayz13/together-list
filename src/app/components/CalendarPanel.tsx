@@ -11,6 +11,22 @@ type Props = {
   onSelectDate: (date: Date) => void;
 };
 
+function ChevronLeft() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+function ChevronRight() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
+
 export default function CalendarPanel({ activities, selectedDate, onSelectDate }: Props) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -56,17 +72,27 @@ export default function CalendarPanel({ activities, selectedDate, onSelectDate }
     .slice(0, 5);
 
   return (
-    <aside className="w-full md:w-[35%] bg-card rounded-2xl border border-border p-4 shadow-sm flex flex-col gap-4">
+    <aside className="w-full md:w-[35%] card-glass rounded-3xl p-5 shadow-lg shadow-shadow/5 flex flex-col gap-4">
       {/* Month navigation */}
       <div className="flex items-center justify-between">
-        <button onClick={goToPrevMonth} className="p-1 hover:bg-cream rounded-lg transition-colors text-lg">◀</button>
-        <h2 className="font-bold text-lg">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
-        <button onClick={goToNextMonth} className="p-1 hover:bg-cream rounded-lg transition-colors text-lg">▶</button>
+        <button
+          onClick={goToPrevMonth}
+          className="p-2 hover:bg-accentLight rounded-xl transition-all text-textMuted hover:text-accent btn-press"
+        >
+          <ChevronLeft />
+        </button>
+        <h2 className="font-bold text-lg tracking-tight">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
+        <button
+          onClick={goToNextMonth}
+          className="p-2 hover:bg-accentLight rounded-xl transition-all text-textMuted hover:text-accent btn-press"
+        >
+          <ChevronRight />
+        </button>
       </div>
 
       {/* Day headers */}
-      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-textMuted">
-        {DAY_NAMES.map((d) => <div key={d}>{d}</div>)}
+      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-textMuted/70 uppercase tracking-wider">
+        {DAY_NAMES.map((d) => <div key={d} className="py-1">{d}</div>)}
       </div>
 
       {/* Calendar grid */}
@@ -82,15 +108,19 @@ export default function CalendarPanel({ activities, selectedDate, onSelectDate }
               key={i}
               onClick={() => onSelectDate(day.date)}
               className={`
-                relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm transition-all
-                ${day.isCurrentMonth ? "text-textMain" : "text-textMuted/40"}
-                ${isSelected ? "bg-accent text-white font-bold shadow-md scale-105" : "hover:bg-cream"}
-                ${isToday && !isSelected ? "ring-2 ring-accent/50 font-semibold" : ""}
+                calendar-day relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-medium
+                ${day.isCurrentMonth ? "text-textMain" : "text-textMuted/30"}
+                ${isSelected
+                  ? "bg-accent text-white font-bold shadow-md shadow-accent/30"
+                  : isToday
+                    ? "bg-accentLight text-accent font-bold"
+                    : "hover:bg-cream/80"
+                }
               `}
             >
               {day.date.getDate()}
               {hasActivity && (
-                <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-accent" />
+                <span className={`absolute bottom-1.5 w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-accent"}`} />
               )}
             </button>
           );

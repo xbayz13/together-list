@@ -5,6 +5,7 @@
   --color-card: #FFFFFF;
   --color-accent: #A8D8EA;
   --color-accentHover: #8EC5D6;
+  --color-accentLight: #D4EEF7;
   --color-textMain: #2D2D2D;
   --color-textMuted: #6B7280;
   --color-badgeIde: #A8D8EA;
@@ -12,8 +13,19 @@
   --color-badgeDone: #A9DFBF;
   --color-badgeBatal: #D5D8DC;
   --color-border: rgba(0, 0, 0, 0.08);
+  --color-borderStrong: rgba(0, 0, 0, 0.12);
   --color-shadow: rgba(0, 0, 0, 0.06);
+  --color-shadowStrong: rgba(0, 0, 0, 0.1);
   --font-sans: var(--font-nunito);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #FFF8F0 0%, #F0F7FA 100%);
+  min-height: 100vh;
 }
 
 .safe-area-bottom {
@@ -26,15 +38,23 @@
   }
 }
 
+/* Card glass effect */
+.card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
 /* Modal animation */
 .animate-in {
-  animation: modalIn 0.25s ease-out;
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalIn {
   from {
     opacity: 0;
-    transform: scale(0.95) translateY(8px);
+    transform: scale(0.92) translateY(12px);
   }
   to {
     opacity: 1;
@@ -44,32 +64,68 @@
 
 /* Toast animation */
 .toast-in {
-  animation: toastIn 0.3s ease-out;
+  animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes toastIn {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(24px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
 
 /* Smooth list transition */
 .activity-list-enter {
-  animation: listEnter 0.2s ease-out;
+  animation: listEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes listEnter {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Calendar day hover */
+.calendar-day {
+  transition: all 0.15s ease;
+}
+
+.calendar-day:hover {
+  transform: scale(1.08);
+}
+
+.calendar-day:active {
+  transform: scale(0.95);
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.96);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
