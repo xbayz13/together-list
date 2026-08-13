@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { getActivities, type ActivityData } from "./actions/activities";
 import { type PolaroidData } from "./actions/polaroids";
 import CalendarPanel from "./components/CalendarPanel";
@@ -26,6 +26,7 @@ export default function Home() {
   const [allPolaroids, setAllPolaroids] = useState<PolaroidData[]>([]);
   const [selectedPolaroid, setSelectedPolaroid] = useState<PolaroidData | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [polaroidRefreshKey, setPolaroidRefreshKey] = useState(0);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -50,7 +51,6 @@ export default function Home() {
 
   const handleSelectDate = (date: Date) => {
     setSelectedDate(date);
-    // Find first activity on this date and highlight it
     const match = activities.find((a) => {
       if (!a.date) return false;
       const d = new Date(a.date);
@@ -59,15 +59,25 @@ export default function Home() {
     if (match) setSelectedActivityId(match.id);
   };
 
-  const calendarContent = (
+  // Stable callbacks with useCallback
+  const handlePolaroidClick = useCallback((p: PolaroidData) => {
+    setSelectedPolaroid(p);
+  }, []);
+
+  const handlePolaroidsLoaded = useCallback((polaroids: PolaroidData[]) => {
+    setAllPolaroids(polaroids);
+  }, []);
+
+  // Memoize galleryContent to prevent unnecessary re-renders
+  const calendarContent = useMemo(() => (
     <CalendarPanel
       activities={activities}
       selectedDate={selectedDate}
       onSelectDate={handleSelectDate}
     />
-  );
+  ), [activities, selectedDate]);
 
-  const listContent = (
+  const listContent = useMemo(() => (
     <ListPanel
       activities={activities}
       selectedDate={selectedDate}
@@ -77,18 +87,15 @@ export default function Home() {
       }}
       selectedActivityId={selectedActivityId}
     />
-  );
+  ), [activities, selectedDate, selectedActivityId]);
 
-  const galleryContent = (
+  const galleryContent = useMemo(() => (
     <PolaroidGallery
-      onPolaroidClick={(p) => {
-        setSelectedPolaroid(p);
-      }}
-      onPolaroidsLoaded={(polaroids) => {
-        setAllPolaroids(polaroids);
-      }}
+      onPolaroidClick={handlePolaroidClick}
+      onPolaroidsLoaded={handlePolaroidsLoaded}
+      refreshKey={polaroidRefreshKey}
     />
-  );
+  ), [handlePolaroidClick, handlePolaroidsLoaded, polaroidRefreshKey]);
 
   if (loading) {
     return (
@@ -155,8 +162,9 @@ export default function Home() {
           <PolaroidUploadModal
             onClose={() => setShowUploadModal(false)}
             onSuccess={() => {
-              // Refresh gallery (PolaroidGallery will refetch)
               setShowUploadModal(false);
+              // Increment refreshKey to trigger gallery refetch
+              setPolaroidRefreshKey(k => k + 1);
             }}
           />
         </div>

@@ -1,25 +1,30 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { PolaroidData, getPolaroids } from "../actions/polaroids";
 import PolaroidCard from "./PolaroidCard";
 
 type PolaroidGalleryProps = {
   onPolaroidClick: (polaroid: PolaroidData) => void;
   onPolaroidsLoaded?: (polaroids: PolaroidData[]) => void;
+  refreshKey?: number;
 };
 
-const DESKTOP_ROTATIONS = [7, -5, 9, -8, 11];
 const MOBILE_ROTATIONS = [4, -3, 5, -4, 6, -5];
 
 export default function PolaroidGallery({
   onPolaroidClick,
   onPolaroidsLoaded,
+  refreshKey = 0,
 }: PolaroidGalleryProps) {
   const [polaroids, setPolaroids] = useState<PolaroidData[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Use ref for callback to avoid infinite re-render loop
+  const onPolaroidsLoadedRef = useRef(onPolaroidsLoaded);
+  onPolaroidsLoadedRef.current = onPolaroidsLoaded;
 
   // Check mobile
   useEffect(() => {
@@ -29,19 +34,28 @@ export default function PolaroidGallery({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Fetch polaroids
+  // Fetch polaroids - refetch when refreshKey changes
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchPolaroids() {
       try {
         const data = await getPolaroids();
-        setPolaroids(data);
-        onPolaroidsLoaded?.(data);
+        if (!cancelled) {
+          setPolaroids(data);
+          onPolaroidsLoadedRef.current?.(data);
+        }
       } catch (error) {
         console.error("Failed to fetch polaroids:", error);
       }
     }
+
     fetchPolaroids();
-  }, [onPolaroidsLoaded]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshKey]); // Only refetch when refreshKey changes
 
   // Auto-scroll carousel (desktop only)
   const scrollNext = useCallback(() => {
