@@ -13,7 +13,7 @@ export type PolaroidData = {
 };
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "polaroids");
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"];
 
 export async function getPolaroids(): Promise<PolaroidData[]> {

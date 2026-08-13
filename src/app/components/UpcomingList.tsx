@@ -26,7 +26,7 @@ export default function UpcomingList({ activities }: Props) {
             <span>{getStickerEmoji(a.title)}</span>
             <span className="font-medium truncate">{a.title}</span>
             <span className="text-xs text-textMuted ml-auto whitespace-nowrap">
-              {formatDateIndo(new Date(a.date!))}
+              {a.date && formatDateIndo(new Date(a.date))}
             </span>
           </div>
         ))}

@@ -30,9 +30,9 @@ export default function PolaroidUploadModal({
       return;
     }
 
-    // Validate file size (5MB)
-    if (selectedFile.size > 5 * 1024 * 1024) {
-      setError("Ukuran foto maksimal 5MB");
+    // Validate file size (15MB)
+    if (selectedFile.size > 15 * 1024 * 1024) {
+      setError("Ukuran foto maksimal 15MB");
       return;
     }
 
@@ -138,7 +138,7 @@ export default function PolaroidUploadModal({
                   </svg>
                   <span>Klik untuk pilih foto</span>
                   <span className="upload-file-hint">
-                    JPG, PNG, WebP, HEIC (max 5MB)
+                    JPG, PNG, WebP, HEIC (max 15MB)
                   </span>
                 </>
               )}
