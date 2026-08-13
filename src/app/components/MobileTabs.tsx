@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 
-type Tab = "list" | "calendar";
+type Tab = "list" | "calendar" | "gallery";
 
 function ListIcon({ active }: { active: boolean }) {
   return (
@@ -47,6 +47,26 @@ function CalendarIcon({ active }: { active: boolean }) {
   );
 }
 
+function GalleryIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={active ? "#A8D8EA" : "#6B7280"}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="transition-colors duration-200"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <polyline points="21 15 16 10 5 21" />
+    </svg>
+  );
+}
+
 export default function MobileTabs({
   children,
 }: {
@@ -62,10 +82,16 @@ export default function MobileTabs({
     
     setIsAnimating(true);
     
-    // Fade out current content (flipped direction)
+    // Determine animation direction based on tab order
+    const tabOrder: Tab[] = ["list", "calendar", "gallery"];
+    const currentIndex = tabOrder.indexOf(activeTab);
+    const newIndex = tabOrder.indexOf(newTab);
+    const direction = newIndex > currentIndex ? 1 : -1;
+    
+    // Fade out current content
     if (contentRef.current) {
       contentRef.current.style.opacity = "0";
-      contentRef.current.style.transform = newTab === "calendar" ? "translateX(20px)" : "translateX(-20px)";
+      contentRef.current.style.transform = `translateX(${direction * 20}px)`;
     }
     
     // After fade out, switch tab and fade in
@@ -73,10 +99,10 @@ export default function MobileTabs({
       setDisplayTab(newTab);
       setActiveTab(newTab);
       
-      // Force reflow then animate in (flipped direction)
+      // Force reflow then animate in
       requestAnimationFrame(() => {
         if (contentRef.current) {
-          contentRef.current.style.transform = newTab === "calendar" ? "translateX(-20px)" : "translateX(20px)";
+          contentRef.current.style.transform = `translateX(${-direction * 20}px)`;
           requestAnimationFrame(() => {
             if (contentRef.current) {
               contentRef.current.style.opacity = "1";
@@ -99,7 +125,11 @@ export default function MobileTabs({
   const tabs = [
     { key: "list" as Tab, label: "List", icon: ListIcon },
     { key: "calendar" as Tab, label: "Calendar", icon: CalendarIcon },
+    { key: "gallery" as Tab, label: "Gallery", icon: GalleryIcon },
   ];
+
+  // Calculate indicator position (33.33% per tab)
+  const indicatorLeft = `calc(${(tabs.findIndex(t => t.key === activeTab) + 0.5) * 33.33}% - 20px)`;
 
   return (
     <div className="md:hidden flex flex-col h-screen">
@@ -121,7 +151,7 @@ export default function MobileTabs({
             className="absolute bottom-0 h-0.5 bg-accent rounded-full transition-all duration-300 ease-out"
             style={{
               width: "40px",
-              left: activeTab === "list" ? "calc(25% - 20px)" : "calc(75% - 20px)",
+              left: indicatorLeft,
             }}
           />
           

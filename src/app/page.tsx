@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getActivities, type ActivityData } from "./actions/activities";
+import { type PolaroidData } from "./actions/polaroids";
 import CalendarPanel from "./components/CalendarPanel";
 import ListPanel from "./components/ListPanel";
 import ActivityModal from "./components/ActivityModal";
@@ -9,6 +10,9 @@ import FloatingActionButton from "./components/FloatingActionButton";
 import MobileTabs from "./components/MobileTabs";
 import Toast from "./components/Toast";
 import MovingClouds from "./components/MovingClouds";
+import PolaroidGallery from "./components/PolaroidGallery";
+import PolaroidLightbox from "./components/PolaroidLightbox";
+import PolaroidUploadModal from "./components/PolaroidUploadModal";
 
 export default function Home() {
   const [activities, setActivities] = useState<ActivityData[]>([]);
@@ -17,6 +21,11 @@ export default function Home() {
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null);
   const [modal, setModal] = useState<{ mode: "add" | "edit"; activity?: ActivityData } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  // Polaroid state
+  const [allPolaroids, setAllPolaroids] = useState<PolaroidData[]>([]);
+  const [selectedPolaroid, setSelectedPolaroid] = useState<PolaroidData | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -70,6 +79,17 @@ export default function Home() {
     />
   );
 
+  const galleryContent = (
+    <PolaroidGallery
+      onPolaroidClick={(p) => {
+        setSelectedPolaroid(p);
+      }}
+      onPolaroidsLoaded={(polaroids) => {
+        setAllPolaroids(polaroids);
+      }}
+    />
+  );
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -84,9 +104,14 @@ export default function Home() {
       <MovingClouds />
 
       {/* Desktop */}
-      <div className="hidden md:flex min-h-screen items-center justify-center px-6 py-10 relative" style={{ zIndex: 2 }}>
-        <div className="w-full max-w-[70vw] flex gap-6">
-          {calendarContent}
+      <div className="hidden md:flex min-h-screen items-start justify-center px-6 py-10 relative" style={{ zIndex: 2 }}>
+        <div className="w-full max-w-6xl flex gap-6">
+          {/* Left panel: Calendar + Gallery */}
+          <div className="w-[25%] flex flex-col gap-4">
+            {calendarContent}
+            {galleryContent}
+          </div>
+          {/* Right panel: List */}
           {listContent}
         </div>
       </div>
@@ -96,7 +121,9 @@ export default function Home() {
         <MobileTabs>
           {(tab) => (
             <div className="p-4">
-              {tab === "list" ? listContent : calendarContent}
+              {tab === "list" && listContent}
+              {tab === "calendar" && calendarContent}
+              {tab === "gallery" && galleryContent}
             </div>
           )}
         </MobileTabs>
@@ -104,10 +131,13 @@ export default function Home() {
 
       {/* FAB */}
       <div className="relative" style={{ zIndex: 50 }}>
-        <FloatingActionButton onClick={() => setModal({ mode: "add" })} />
+        <FloatingActionButton
+          onAddActivity={() => setModal({ mode: "add" })}
+          onUploadPhoto={() => setShowUploadModal(true)}
+        />
       </div>
 
-      {/* Modal */}
+      {/* Activity Modal */}
       {modal && (
         <div className="relative" style={{ zIndex: 100 }}>
           <ActivityModal
@@ -115,6 +145,31 @@ export default function Home() {
             activity={modal.activity || null}
             onClose={() => setModal(null)}
             onSaved={handleSaved}
+          />
+        </div>
+      )}
+
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <div className="relative" style={{ zIndex: 100 }}>
+          <PolaroidUploadModal
+            onClose={() => setShowUploadModal(false)}
+            onSuccess={() => {
+              // Refresh gallery (PolaroidGallery will refetch)
+              setShowUploadModal(false);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {selectedPolaroid && (
+        <div className="relative" style={{ zIndex: 100 }}>
+          <PolaroidLightbox
+            polaroid={selectedPolaroid}
+            allPolaroids={allPolaroids}
+            onClose={() => setSelectedPolaroid(null)}
+            onNavigate={(p) => setSelectedPolaroid(p)}
           />
         </div>
       )}

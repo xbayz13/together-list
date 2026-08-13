@@ -1,26 +1,84 @@
 "use client";
 
+import { useState } from "react";
+
 type Props = {
-  onClick: () => void;
+  onAddActivity: () => void;
+  onUploadPhoto: () => void;
 };
 
-function PlusIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  );
-}
+export default function FloatingActionButton({
+  onAddActivity,
+  onUploadPhoto,
+}: Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
 
-export default function FloatingActionButton({ onClick }: Props) {
+  const handleMainClick = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const handleAddActivity = () => {
+    setIsExpanded(false);
+    onAddActivity();
+  };
+
+  const handleUploadPhoto = () => {
+    setIsExpanded(false);
+    onUploadPhoto();
+  };
+
   return (
-    <button
-      onClick={onClick}
-      className="fixed bottom-24 md:bottom-8 right-6 z-40 w-14 h-14 rounded-2xl bg-accent text-white shadow-lg shadow-accent/30 hover:bg-accentHover hover:shadow-xl hover:shadow-accent/40 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center btn-press"
-      aria-label="Tambah aktivitas baru"
-    >
-      <PlusIcon />
-    </button>
+    <div className="fab-container">
+      {/* Overlay to close when clicking outside */}
+      {isExpanded && (
+        <div
+          className="fab-overlay"
+          onClick={() => setIsExpanded(false)}
+        />
+      )}
+
+      {/* Child buttons */}
+      <div className={`fab-children ${isExpanded ? "expanded" : ""}`}>
+        <button
+          className="fab-child"
+          onClick={handleAddActivity}
+          aria-label="Tambah aktivitas"
+          style={{ animationDelay: "0ms" }}
+        >
+          <span className="fab-child-icon">➕</span>
+          <span className="fab-child-label">Aktivitas</span>
+        </button>
+        <button
+          className="fab-child"
+          onClick={handleUploadPhoto}
+          aria-label="Upload foto"
+          style={{ animationDelay: "100ms" }}
+        >
+          <span className="fab-child-icon">📸</span>
+          <span className="fab-child-label">Foto</span>
+        </button>
+      </div>
+
+      {/* Main FAB button */}
+      <button
+        className={`fab-main ${isExpanded ? "expanded" : ""}`}
+        onClick={handleMainClick}
+        aria-label={isExpanded ? "Tutup menu" : "Buka menu"}
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+    </div>
   );
 }

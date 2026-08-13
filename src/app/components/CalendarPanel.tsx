@@ -72,7 +72,7 @@ export default function CalendarPanel({ activities, selectedDate, onSelectDate }
     .slice(0, 5);
 
   return (
-    <aside className="w-full md:w-[35%] card-glass rounded-3xl p-5 shadow-lg shadow-shadow/5 flex flex-col gap-4">
+    <aside className="card-glass rounded-3xl p-5 shadow-lg shadow-shadow/5 flex flex-col gap-4">
       {/* Month navigation */}
       <div className="flex items-center justify-between">
         <button

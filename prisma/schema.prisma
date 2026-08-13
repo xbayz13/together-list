@@ -25,3 +25,12 @@ model Activity {
 
   @@map("activities")
 }
+
+model Polaroid {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(50)
+  imageUrl  String   @db.VarChar(500)
+  createdAt DateTime @default(now())
+
+  @@map("polaroids")
+}

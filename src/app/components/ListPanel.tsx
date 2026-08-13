@@ -56,7 +56,7 @@ export default function ListPanel({ activities, selectedDate, onSelectActivity, 
   const progress = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
 
   return (
-    <main className="w-full md:w-[65%] flex flex-col gap-4 md:gap-5">
+    <main className="flex-1 flex flex-col gap-4 md:gap-5">
       {/* Hero Header */}
       <div className="text-left mb-2">
         <h1 className="text-[42px] md:text-5xl font-extrabold tracking-tight text-textMain leading-tight" style={{ textShadow: "3px 3px 0 #9A9A9A, 6px 6px 0 #D8D8D8" }}>
@@ -109,7 +109,7 @@ export default function ListPanel({ activities, selectedDate, onSelectActivity, 
 
       <FilterTabs activeFilter={filter} onChange={setFilter} />
 
-      <div className="flex flex-col gap-3">
+      <div className={`flex flex-col gap-3 ${filtered.length > 4 ? 'task-list-scroll' : ''}`} style={filtered.length > 4 ? { maxHeight: 'calc(100vh - 380px)', overflowY: 'auto' } : undefined}>
         {isEmpty && (
           <div className="card-glass rounded-2xl text-center py-14 px-6">
             <div className="flex justify-center mb-5">
