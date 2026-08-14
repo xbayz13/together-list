@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Activity: 'Activity'
+  Activity: 'Activity',
+  Polaroid: 'Polaroid'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,6 +82,16 @@ export const ActivityScalarFieldEnum = {
 } as const
 
 export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
+
+
+export const PolaroidScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt'
+} as const
+
+export type PolaroidScalarFieldEnum = (typeof PolaroidScalarFieldEnum)[keyof typeof PolaroidScalarFieldEnum]
 
 
 export const SortOrder = {

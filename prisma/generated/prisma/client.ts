@@ -46,3 +46,8 @@ export { Prisma }
  * 
  */
 export type Activity = Prisma.ActivityModel
+/**
+ * Model Polaroid
+ * 
+ */
+export type Polaroid = Prisma.PolaroidModel

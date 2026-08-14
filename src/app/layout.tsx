@@ -1,10 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito } from "next/font/google";
+import { Nunito, Caveat } from "next/font/google";
 import "./globals.css";
 
 const nunito = Nunito({
   subsets: ["latin"],
   variable: "--font-nunito",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
 });
 
 export const metadata: Metadata = {
@@ -56,7 +61,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body className={`${nunito.variable} font-sans bg-cream text-textMain antialiased`}>
+      <body className={`${nunito.variable} ${caveat.variable} font-sans bg-cream text-textMain antialiased`}>
         {children}
       </body>
     </html>

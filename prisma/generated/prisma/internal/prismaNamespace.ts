@@ -397,7 +397,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Activity: 'Activity'
+  Activity: 'Activity',
+  Polaroid: 'Polaroid'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -413,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "activity"
+    modelProps: "activity" | "polaroid"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -491,6 +492,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Polaroid: {
+      payload: Prisma.$PolaroidPayload<ExtArgs>
+      fields: Prisma.PolaroidFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PolaroidFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PolaroidFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>
+        }
+        findFirst: {
+          args: Prisma.PolaroidFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PolaroidFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>
+        }
+        findMany: {
+          args: Prisma.PolaroidFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>[]
+        }
+        create: {
+          args: Prisma.PolaroidCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>
+        }
+        createMany: {
+          args: Prisma.PolaroidCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PolaroidCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>[]
+        }
+        delete: {
+          args: Prisma.PolaroidDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>
+        }
+        update: {
+          args: Prisma.PolaroidUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>
+        }
+        deleteMany: {
+          args: Prisma.PolaroidDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PolaroidUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PolaroidUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>[]
+        }
+        upsert: {
+          args: Prisma.PolaroidUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PolaroidPayload>
+        }
+        aggregate: {
+          args: Prisma.PolaroidAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePolaroid>
+        }
+        groupBy: {
+          args: Prisma.PolaroidGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PolaroidGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PolaroidCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PolaroidCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -541,6 +616,16 @@ export const ActivityScalarFieldEnum = {
 } as const
 
 export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
+
+
+export const PolaroidScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt'
+} as const
+
+export type PolaroidScalarFieldEnum = (typeof PolaroidScalarFieldEnum)[keyof typeof PolaroidScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -794,6 +879,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   activity?: Prisma.ActivityOmit
+  polaroid?: Prisma.PolaroidOmit
 }
 
 /* Types for Logging */

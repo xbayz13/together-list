@@ -339,8 +339,9 @@ body::before {
   overflow: hidden;
   border-radius: 2px;
   aspect-ratio: 1;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
 }
 
 .polaroid-image {
@@ -363,7 +364,8 @@ body::before {
 }
 
 .polaroid-title {
-  font-size: 12px;
+  font-family: var(--font-caveat);
+  font-size: 16px;
   font-weight: 600;
   color: #2D2D2D;
   white-space: nowrap;
@@ -573,6 +575,7 @@ body::before {
 }
 
 .polaroid-lightbox-frame {
+  position: relative;
   background: white;
   padding: 12px 12px 48px 12px;
   border-radius: 4px;
@@ -609,8 +612,9 @@ body::before {
   right: 12px;
   text-align: center;
   color: #2D2D2D;
+  font-family: var(--font-caveat);
+  font-size: 22px;
   font-weight: 600;
-  font-size: 14px;
 }
 
 /* Navigation arrows */
