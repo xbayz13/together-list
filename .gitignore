@@ -40,3 +40,6 @@ next-env.d.ts
 
 # prisma generated
 /prisma/generated/
+
+# API Keys
+.env
