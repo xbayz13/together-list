@@ -16,9 +16,9 @@ export default function MovingClouds() {
             </filter>
           </defs>
           <g filter="url(#cloudBlur1)">
-            <circle cx="30" cy="30" r="18" fill="#E8F4F8" />
-            <circle cx="55" cy="25" r="22" fill="#E8F4F8" />
-            <circle cx="75" cy="30" r="16" fill="#E8F4F8" />
+            <circle cx="30" cy="30" r="18" fill="#79BFD6" />
+            <circle cx="55" cy="25" r="22" fill="#79BFD6" />
+            <circle cx="75" cy="30" r="16" fill="#79BFD6" />
           </g>
         </svg>
       </div>
@@ -32,10 +32,10 @@ export default function MovingClouds() {
             </filter>
           </defs>
           <g filter="url(#cloudBlur2)">
-            <circle cx="35" cy="38" r="22" fill="#E8F4F8" />
-            <circle cx="70" cy="30" r="28" fill="#E8F4F8" />
-            <circle cx="105" cy="38" r="20" fill="#E8F4F8" />
-            <circle cx="55" cy="25" r="18" fill="#E8F4F8" />
+            <circle cx="35" cy="38" r="22" fill="#79BFD6" />
+            <circle cx="70" cy="30" r="28" fill="#79BFD6" />
+            <circle cx="105" cy="38" r="20" fill="#79BFD6" />
+            <circle cx="55" cy="25" r="18" fill="#79BFD6" />
           </g>
         </svg>
       </div>
@@ -49,10 +49,10 @@ export default function MovingClouds() {
             </filter>
           </defs>
           <g filter="url(#cloudBlur3)">
-            <circle cx="50" cy="50" r="28" fill="#E8F4F8" />
-            <circle cx="95" cy="40" r="38" fill="#E8F4F8" />
-            <circle cx="145" cy="50" r="26" fill="#E8F4F8" />
-            <circle cx="75" cy="32" r="22" fill="#E8F4F8" />
+            <circle cx="50" cy="50" r="28" fill="#79BFD6" />
+            <circle cx="95" cy="40" r="38" fill="#79BFD6" />
+            <circle cx="145" cy="50" r="26" fill="#79BFD6" />
+            <circle cx="75" cy="32" r="22" fill="#79BFD6" />
           </g>
         </svg>
       </div>
@@ -66,9 +66,9 @@ export default function MovingClouds() {
             </filter>
           </defs>
           <g filter="url(#cloudBlur4)">
-            <circle cx="25" cy="28" r="16" fill="#E8F4F8" />
-            <circle cx="50" cy="22" r="20" fill="#E8F4F8" />
-            <circle cx="70" cy="28" r="14" fill="#E8F4F8" />
+            <circle cx="25" cy="28" r="16" fill="#79BFD6" />
+            <circle cx="50" cy="22" r="20" fill="#79BFD6" />
+            <circle cx="70" cy="28" r="14" fill="#79BFD6" />
           </g>
         </svg>
       </div>
@@ -82,10 +82,10 @@ export default function MovingClouds() {
             </filter>
           </defs>
           <g filter="url(#cloudBlur5)">
-            <circle cx="40" cy="42" r="24" fill="#E8F4F8" />
-            <circle cx="85" cy="35" r="32" fill="#E8F4F8" />
-            <circle cx="130" cy="42" r="22" fill="#E8F4F8" />
-            <circle cx="65" cy="28" r="20" fill="#E8F4F8" />
+            <circle cx="40" cy="42" r="24" fill="#79BFD6" />
+            <circle cx="85" cy="35" r="32" fill="#79BFD6" />
+            <circle cx="130" cy="42" r="22" fill="#79BFD6" />
+            <circle cx="65" cy="28" r="20" fill="#79BFD6" />
           </g>
         </svg>
       </div>
