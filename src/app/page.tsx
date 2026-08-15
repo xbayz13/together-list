@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { getActivities, type ActivityData } from "./actions/activities";
+import { getSongs, type SongData } from "./actions/songs";
 import { type PolaroidData } from "./actions/polaroids";
 import CalendarPanel from "./components/CalendarPanel";
 import ListPanel from "./components/ListPanel";
@@ -13,9 +14,11 @@ import MovingClouds from "./components/MovingClouds";
 import PolaroidGallery from "./components/PolaroidGallery";
 import PolaroidLightbox from "./components/PolaroidLightbox";
 import PolaroidUploadModal from "./components/PolaroidUploadModal";
+import MusicPlayer from "./components/MusicPlayer";
 
 export default function Home() {
   const [activities, setActivities] = useState<ActivityData[]>([]);
+  const [songs, setSongs] = useState<SongData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null);
@@ -27,6 +30,10 @@ export default function Home() {
   const [selectedPolaroid, setSelectedPolaroid] = useState<PolaroidData | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [polaroidRefreshKey, setPolaroidRefreshKey] = useState(0);
+
+  // Music player state
+  const [playerActive, setPlayerActive] = useState(false);
+  const [songRefreshKey, setSongRefreshKey] = useState(0);
 
   const fetchActivities = useCallback(async () => {
     try {
@@ -40,9 +47,20 @@ export default function Home() {
     }
   }, []);
 
+  const fetchSongs = useCallback(async () => {
+    try {
+      const data = await getSongs();
+      setSongs(data);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Gagal mengambil data lagu";
+      setToast(errorMessage);
+    }
+  }, []);
+
   useEffect(() => {
     fetchActivities();
-  }, [fetchActivities]);
+    fetchSongs();
+  }, [fetchActivities, fetchSongs]);
 
   const handleSaved = () => {
     setModal(null);
@@ -67,6 +85,15 @@ export default function Home() {
   const handlePolaroidsLoaded = useCallback((polaroids: PolaroidData[]) => {
     setAllPolaroids(polaroids);
   }, []);
+
+  const handlePlayerActiveChange = useCallback((active: boolean) => {
+    setPlayerActive(active);
+  }, []);
+
+  const handleSongRefresh = useCallback(() => {
+    setSongRefreshKey((k) => k + 1);
+    fetchSongs();
+  }, [fetchSongs]);
 
   // Memoize galleryContent to prevent unnecessary re-renders
   const calendarContent = useMemo(() => (
@@ -136,11 +163,22 @@ export default function Home() {
         </MobileTabs>
       </div>
 
+      {/* Music Player */}
+      <div className="relative" style={{ zIndex: 35 }}>
+        <MusicPlayer
+          songs={songs}
+          onSongAdded={handleSongRefresh}
+          onSongDeleted={handleSongRefresh}
+          onPlayerActiveChange={handlePlayerActiveChange}
+        />
+      </div>
+
       {/* FAB */}
       <div className="relative" style={{ zIndex: 50 }}>
         <FloatingActionButton
           onAddActivity={() => setModal({ mode: "add" })}
           onUploadPhoto={() => setShowUploadModal(true)}
+          playerActive={playerActive}
         />
       </div>
 

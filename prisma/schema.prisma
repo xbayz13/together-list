@@ -34,3 +34,17 @@ model Polaroid {
 
   @@map("polaroids")
 }
+
+model Song {
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(200)
+  artist       String   @db.VarChar(200)
+  videoId      String   @db.VarChar(20)
+  thumbnailUrl String   @db.VarChar(500)
+  duration     String?  @db.VarChar(10)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@map("songs")
+  @@unique([videoId])
+}

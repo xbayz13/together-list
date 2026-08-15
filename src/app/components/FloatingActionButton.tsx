@@ -5,11 +5,13 @@ import { useState } from "react";
 type Props = {
   onAddActivity: () => void;
   onUploadPhoto: () => void;
+  playerActive?: boolean;
 };
 
 export default function FloatingActionButton({
   onAddActivity,
   onUploadPhoto,
+  playerActive = false,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -28,7 +30,7 @@ export default function FloatingActionButton({
   };
 
   return (
-    <div className="fab-container">
+    <div className={`fab-container ${playerActive ? "player-active" : ""}`}>
       {/* Overlay to close when clicking outside */}
       {isExpanded && (
         <div
