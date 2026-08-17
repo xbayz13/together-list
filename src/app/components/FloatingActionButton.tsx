@@ -6,12 +6,14 @@ type Props = {
   onAddActivity: () => void;
   onUploadPhoto: () => void;
   playerActive?: boolean;
+  mobilePlayerExpanded?: boolean;
 };
 
 export default function FloatingActionButton({
   onAddActivity,
   onUploadPhoto,
   playerActive = false,
+  mobilePlayerExpanded = false,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -30,7 +32,7 @@ export default function FloatingActionButton({
   };
 
   return (
-    <div className={`fab-container ${playerActive ? "player-active" : ""}`}>
+    <div className={`fab-container ${playerActive ? "player-active" : ""} ${mobilePlayerExpanded ? "mobile-player-expanded" : ""}`}>
       {/* Overlay to close when clicking outside */}
       {isExpanded && (
         <div

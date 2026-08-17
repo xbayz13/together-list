@@ -964,6 +964,12 @@ body::before {
   flex-direction: column;
   z-index: 45;
   animation: playerExpand 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* Make content scrollable */
+.music-player-expanded > *:last-child {
+  overflow-y: auto;
 }
 
 @keyframes playerExpand {
@@ -1340,6 +1346,12 @@ body::before {
   flex-direction: column;
   z-index: 100;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* Make content scrollable */
+.music-player-fullscreen > *:last-child {
+  overflow-y: auto;
 }
 
 @keyframes slideUp {
@@ -1419,6 +1431,7 @@ body::before {
 .add-song-form {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   padding: 16px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .add-song-form-header {
@@ -1432,21 +1445,23 @@ body::before {
 }
 
 .add-song-form-close {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   color: #6B7280;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .add-song-form-close:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.1);
+  color: #2D2D2D;
 }
 
 .add-song-form-input-section {
@@ -1457,16 +1472,18 @@ body::before {
 
 .add-song-form-input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+  background: white;
 }
 
 .add-song-form-input:focus {
   border-color: #A8D8EA;
+  box-shadow: 0 0 0 3px rgba(168, 216, 234, 0.2);
 }
 
 .add-song-form-input:disabled {
@@ -1477,6 +1494,9 @@ body::before {
   font-size: 12px;
   color: #EF4444;
   margin: 0;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 6px;
 }
 
 .add-song-form-actions {
@@ -1489,12 +1509,12 @@ body::before {
   padding: 10px;
   background: rgba(0, 0, 0, 0.05);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 500;
   color: #6B7280;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .add-song-form-cancel:hover:not(:disabled) {
@@ -1512,17 +1532,18 @@ body::before {
   padding: 10px;
   background: #A8D8EA;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   color: #2D2D2D;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .add-song-form-search:hover:not(:disabled),
 .add-song-form-add:hover:not(:disabled) {
   background: #8EC5D6;
+  transform: translateY(-1px);
 }
 
 .add-song-form-search:disabled,
@@ -1541,11 +1562,13 @@ body::before {
   width: 100%;
   aspect-ratio: 16/9;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .add-song-form-preview-info {
   text-align: center;
+  padding: 0 8px;
 }
 
 .add-song-form-preview-title {
@@ -1557,6 +1580,7 @@ body::before {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.4;
 }
 
 .add-song-form-preview-artist {
@@ -1585,6 +1609,15 @@ body::before {
 
 .fab-container.player-active {
   bottom: 156px;
+}
+
+/* FAB auto-hide when mobile player expanded - MOBILE ONLY */
+@media (max-width: 767px) {
+  .fab-container.mobile-player-expanded {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1696,4 +1729,172 @@ body::before {
   font-size: 14px;
   font-weight: 600;
   color: #2D2D2D;
+}
+
+/* =======================
+   Lyrics Display
+   ======================= */
+
+.lyrics-container {
+  height: 140px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 16px;
+  flex-shrink: 0;
+  scroll-behavior: smooth;
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 248, 240, 0.2) 0%,
+    rgba(255, 255, 255, 0.4) 30%,
+    rgba(255, 255, 255, 0.4) 70%,
+    rgba(255, 248, 240, 0.2) 100%
+  );
+  border-radius: 12px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+/* Hide scrollbar but keep functionality */
+.lyrics-container::-webkit-scrollbar {
+  display: none;
+}
+
+.lyrics-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.lyrics-line {
+  margin: 5px 0;
+  text-align: center;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+/* Active line - currently playing */
+.lyrics-active {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-shadow: 
+    0 0 30px rgba(168, 216, 234, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+  opacity: 1;
+}
+
+/* Nearby lines ±1 */
+.lyrics-nearby {
+  font-size: 15px;
+  font-weight: 500;
+  color: #4a5568;
+  opacity: 0.75;
+  transform: scale(1);
+}
+
+/* Far lines */
+.lyrics-far {
+  font-size: 13px;
+  font-weight: 400;
+  color: #9ca3af;
+  opacity: 0.45;
+  transform: scale(0.98);
+}
+
+/* Plain lyrics fallback */
+.lyrics-plain {
+  justify-content: flex-start;
+  padding-top: 16px;
+}
+
+.lyrics-plain-line {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+/* Spacer for centering first/last lines */
+.lyrics-spacer {
+  min-height: 45px;
+  flex-shrink: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .lyrics-container {
+    height: 120px;
+    padding: 16px 12px;
+  }
+  
+  .lyrics-active {
+    font-size: 17px;
+    text-shadow: 
+      0 0 20px rgba(168, 216, 234, 0.4),
+      0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .lyrics-nearby {
+    font-size: 14px;
+  }
+  
+  .lyrics-far {
+    font-size: 12px;
+  }
+}
+
+/* =======================
+   Collapsed Repeat Indicator
+   ======================= */
+
+.music-player-collapsed-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.music-player-collapsed-repeat-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A8D8EA;
+}
+
+.music-player-mini-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.music-player-mini-repeat-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A8D8EA;
+}
+
+/* =======================
+   Vinyl Medium Size
+   ======================= */
+
+.vinyl-medium {
+  width: 140px;
+  height: 140px;
 }

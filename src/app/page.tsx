@@ -33,6 +33,7 @@ export default function Home() {
 
   // Music player state
   const [playerActive, setPlayerActive] = useState(false);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
   const [songRefreshKey, setSongRefreshKey] = useState(0);
 
   const fetchActivities = useCallback(async () => {
@@ -88,6 +89,10 @@ export default function Home() {
 
   const handlePlayerActiveChange = useCallback((active: boolean) => {
     setPlayerActive(active);
+  }, []);
+
+  const handleMobileExpandedChange = useCallback((expanded: boolean) => {
+    setIsMobileExpanded(expanded);
   }, []);
 
   const handleSongRefresh = useCallback(() => {
@@ -170,6 +175,7 @@ export default function Home() {
           onSongAdded={handleSongRefresh}
           onSongDeleted={handleSongRefresh}
           onPlayerActiveChange={handlePlayerActiveChange}
+          onMobileExpandedChange={handleMobileExpandedChange}
         />
       </div>
 
@@ -179,6 +185,7 @@ export default function Home() {
           onAddActivity={() => setModal({ mode: "add" })}
           onUploadPhoto={() => setShowUploadModal(true)}
           playerActive={playerActive}
+          mobilePlayerExpanded={isMobileExpanded}
         />
       </div>
 

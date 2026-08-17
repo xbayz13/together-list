@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import VinylRecord from "./VinylRecord";
 import AddSongForm from "./AddSongForm";
+import LyricsDisplay from "./LyricsDisplay";
 import type { SongData } from "../actions/songs";
 import { deleteSong } from "../actions/songs";
+import { fetchLyrics, type LyricsData } from "../actions/lyrics";
 
 // YouTube IFrame API types
 type YTPlayer = {
@@ -38,6 +40,7 @@ type Props = {
   onSongAdded: () => void;
   onSongDeleted: () => void;
   onPlayerActiveChange: (active: boolean) => void;
+  onMobileExpandedChange?: (expanded: boolean) => void;
 };
 
 // SVG Icons
@@ -105,8 +108,10 @@ export default function MusicPlayer({
   onSongAdded,
   onSongDeleted,
   onPlayerActiveChange,
+  onMobileExpandedChange,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -116,6 +121,7 @@ export default function MusicPlayer({
   const [showAddForm, setShowAddForm] = useState(false);
   const [apiReady, setApiReady] = useState(false);
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+  const [lyrics, setLyrics] = useState<LyricsData>({ syncedLyrics: null, plainLyrics: null });
 
   const playerRef = useRef<InstanceType<typeof window.YT.Player> | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -126,6 +132,7 @@ export default function MusicPlayer({
   const repeatOnRef = useRef(repeatOn);
   const songsRef = useRef(songs);
   const currentSongIndexRef = useRef(currentSongIndex);
+  const wasPlayingBeforeHiddenRef = useRef(false); // Track if was playing before tab hidden
 
   useEffect(() => { repeatOnRef.current = repeatOn; }, [repeatOn]);
   useEffect(() => { songsRef.current = songs; }, [songs]);
@@ -235,7 +242,7 @@ export default function MusicPlayer({
     };
   }, [apiReady]);
 
-  // Fix 4: Handle song change with proper checks
+  // Handle song change with proper checks
   useEffect(() => {
     if (!currentSong || !apiReady) return;
     if (!playerRef.current) return;
@@ -246,7 +253,19 @@ export default function MusicPlayer({
     if (!isPlaying && !hasAutoPlayed) {
       playerRef.current.pauseVideo();
     }
-  }, [currentSong?.videoId, apiReady, isPlaying, hasAutoPlayed]);
+
+    // Fetch lyrics for the new song
+    const loadLyrics = async () => {
+      if (currentSong.title && currentSong.artist) {
+        const lyricsData = await fetchLyrics(currentSong.title, currentSong.artist);
+        setLyrics(lyricsData);
+      } else {
+        setLyrics({ syncedLyrics: null, plainLyrics: null });
+      }
+    };
+
+    loadLyrics();
+  }, [currentSong?.videoId, apiReady, hasAutoPlayed]); // Remove isPlaying from deps
 
   // Handle play/pause
   useEffect(() => {
@@ -272,6 +291,70 @@ export default function MusicPlayer({
     onPlayerActiveChange(songs.length > 0);
   }, [songs.length, onPlayerActiveChange]);
 
+  // Handle visibility change — resume play saat tab visible lagi
+  useEffect(() => {
+    if (!apiReady) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        // Tab becoming hidden — save current playing state
+        wasPlayingBeforeHiddenRef.current = isPlaying;
+      } else if (document.visibilityState === "visible") {
+        // Tab visible lagi — resume kalo sebelumnya playing
+        if (wasPlayingBeforeHiddenRef.current && playerRef.current) {
+          playerRef.current.playVideo();
+          setIsPlaying(true);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [apiReady, isPlaying]);
+
+  // Setup Media Session — biar musik jalan di background (mobile)
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) return;
+
+    // Set metadata
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentSong?.title || "Unknown",
+      artist: currentSong?.artist || "Unknown",
+      artwork: currentSong?.thumbnailUrl
+        ? [{ src: currentSong.thumbnailUrl, sizes: "256x256", type: "image/jpeg" }]
+        : [],
+    });
+
+    // Set action handlers with try-catch for unsupported handlers
+    try {
+      navigator.mediaSession.setActionHandler("play", () => {
+        if (playerRef.current) {
+          playerRef.current.playVideo();
+          setIsPlaying(true);
+        }
+      });
+
+      navigator.mediaSession.setActionHandler("pause", () => {
+        if (playerRef.current) {
+          playerRef.current.pauseVideo();
+          setIsPlaying(false);
+        }
+      });
+
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        setCurrentSongIndex((prev) => (prev <= 0 ? songs.length - 1 : prev - 1));
+      });
+
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        setCurrentSongIndex((prev) => (prev >= songs.length - 1 ? 0 : prev + 1));
+      });
+    } catch {
+      // Some handlers may not be supported
+    }
+  }, [currentSong, songs.length]);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -292,10 +375,11 @@ export default function MusicPlayer({
 
   const handleProgressClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!progressRef.current || !playerRef.current) return;
+      if (!playerRef.current) return;
       if (typeof playerRef.current.seekTo !== "function") return;
 
-      const rect = progressRef.current.getBoundingClientRect();
+      // Use currentTarget instead of ref to get the clicked element
+      const rect = e.currentTarget.getBoundingClientRect();
       const percent = (e.clientX - rect.left) / rect.width;
       const seekTime = percent * duration;
       playerRef.current.seekTo(seekTime, true);
@@ -349,7 +433,7 @@ export default function MusicPlayer({
           left: 0,
           width: "1px",
           height: "1px",
-          opacity: 0,
+          opacity: 0.01, // Hampir invisible tapi browser treat sebagai visible (prevent throttle)
           pointerEvents: "none",
           zIndex: -1,
         }}
@@ -366,9 +450,16 @@ export default function MusicPlayer({
               <p className="music-player-collapsed-title">{currentSong?.title || "Unknown"}</p>
               <p className="music-player-collapsed-artist">{currentSong?.artist || "Unknown"}</p>
             </div>
-            <button className="music-player-collapsed-play" onClick={(e) => { e.stopPropagation(); handlePlayPause(); }}>
-              {isPlaying ? <PauseIcon /> : <PlayIcon />}
-            </button>
+            <div className="music-player-collapsed-actions">
+              {repeatOn && (
+                <span className="music-player-collapsed-repeat-indicator">
+                  <RepeatIcon active={true} />
+                </span>
+              )}
+              <button className="music-player-collapsed-play" onClick={(e) => { e.stopPropagation(); handlePlayPause(); }}>
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </button>
+            </div>
             <div ref={progressRef} className="music-player-collapsed-progress" onClick={handleProgressClick}>
               <div className="music-player-collapsed-progress-fill" style={{ width: `${progressPercent}%` }} />
             </div>
@@ -393,10 +484,14 @@ export default function MusicPlayer({
               <p className="music-player-expanded-artist">{currentSong?.artist || "Unknown"}</p>
             </div>
 
+            <LyricsDisplay
+              syncedLyrics={lyrics.syncedLyrics}
+              plainLyrics={lyrics.plainLyrics}
+              currentTime={currentTime}
+              songId={currentSong?.id}
+            />
+
             <div className="music-player-controls">
-              <button className={`music-player-btn music-player-repeat ${repeatOn ? "active" : ""}`} onClick={() => setRepeatOn(!repeatOn)}>
-                <RepeatIcon active={repeatOn} />
-              </button>
               <button className="music-player-btn music-player-prev" onClick={handlePrev}>
                 <PrevIcon />
               </button>
@@ -406,10 +501,6 @@ export default function MusicPlayer({
               <button className="music-player-btn music-player-next" onClick={handleNext}>
                 <NextIcon />
               </button>
-              <div className="music-player-volume">
-                <VolumeIcon />
-                <input type="range" min="0" max="100" step="5" value={volume} onChange={handleVolumeChange} className="music-player-volume-slider" />
-              </div>
             </div>
 
             <div className="music-player-progress-container">
@@ -459,19 +550,26 @@ export default function MusicPlayer({
       {/* Mobile Player */}
       <div className="md:hidden">
         {!isExpanded ? (
-          <div className="music-player-mini" onClick={() => setIsExpanded(true)}>
+          <div className="music-player-mini" onClick={() => { setIsExpanded(true); setIsMobileExpanded(true); onMobileExpandedChange?.(true); }}>
             <VinylRecord thumbnailUrl={currentSong?.thumbnailUrl} isPlaying={isPlaying} size="mini" />
             <div className="music-player-mini-info">
               <p className="music-player-mini-title">{currentSong?.title || "Unknown"}</p>
             </div>
-            <button className="music-player-mini-play" onClick={(e) => { e.stopPropagation(); handlePlayPause(); }}>
-              {isPlaying ? <PauseIcon /> : <PlayIcon />}
-            </button>
+            <div className="music-player-mini-actions">
+              {repeatOn && (
+                <span className="music-player-mini-repeat-indicator">
+                  <RepeatIcon active={true} />
+                </span>
+              )}
+              <button className="music-player-mini-play" onClick={(e) => { e.stopPropagation(); handlePlayPause(); }}>
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="music-player-fullscreen">
             <div className="music-player-fullscreen-header">
-              <button className="music-player-fullscreen-close" onClick={() => setIsExpanded(false)}>
+              <button className="music-player-fullscreen-close" onClick={() => { setIsExpanded(false); setIsMobileExpanded(false); onMobileExpandedChange?.(false); }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
@@ -489,10 +587,14 @@ export default function MusicPlayer({
               <p className="music-player-fullscreen-artist">{currentSong?.artist || "Unknown"}</p>
             </div>
 
+            <LyricsDisplay
+              syncedLyrics={lyrics.syncedLyrics}
+              plainLyrics={lyrics.plainLyrics}
+              currentTime={currentTime}
+              songId={currentSong?.id}
+            />
+
             <div className="music-player-controls">
-              <button className={`music-player-btn music-player-repeat ${repeatOn ? "active" : ""}`} onClick={() => setRepeatOn(!repeatOn)}>
-                <RepeatIcon active={repeatOn} />
-              </button>
               <button className="music-player-btn music-player-prev" onClick={handlePrev}>
                 <PrevIcon />
               </button>
@@ -510,11 +612,6 @@ export default function MusicPlayer({
                 <div className="music-player-progress-fill" style={{ width: `${progressPercent}%` }} />
               </div>
               <span className="music-player-time">{formatTime(duration)}</span>
-            </div>
-
-            <div className="music-player-volume-mobile">
-              <VolumeIcon />
-              <input type="range" min="0" max="100" step="5" value={volume} onChange={handleVolumeChange} className="music-player-volume-slider" />
             </div>
 
             <div className="music-player-playlist">
