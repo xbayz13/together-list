@@ -8,7 +8,11 @@ import fs from "fs/promises";
 export type PolaroidData = {
   id: number;
   title: string;
-  imageUrl: string;
+  imageUrl: string | null;  // nullable — video type ga punya imageUrl
+  videoUrl: string | null;
+  thumbnailUrl: string | null;
+  duration: number | null;
+  type: string;  // "photo" | "video"
   createdAt: Date;
 };
 
@@ -75,6 +79,7 @@ export async function createPolaroid(
       data: {
         title: title.trim(),
         imageUrl,
+        type: "photo",
       },
     });
 
@@ -87,18 +92,26 @@ export async function createPolaroid(
 
 export async function deletePolaroid(id: number): Promise<void> {
   try {
-    // Get polaroid to find file path
+    // Get polaroid to find file paths
     const polaroid = await prisma.polaroid.findUnique({ where: { id } });
     if (!polaroid) {
       throw new Error("Polaroid tidak ditemukan");
     }
 
-    // Delete file from disk
-    const filepath = path.join(process.cwd(), "public", polaroid.imageUrl);
-    try {
-      await fs.unlink(filepath);
-    } catch {
-      // File might not exist, continue with database delete
+    // Delete files from disk (handle all types)
+    const filesToDelete = [
+      polaroid.imageUrl,
+      polaroid.videoUrl,
+      polaroid.thumbnailUrl,
+    ].filter(Boolean) as string[];
+
+    for (const file of filesToDelete) {
+      const filepath = path.join(process.cwd(), "public", file);
+      try {
+        await fs.unlink(filepath);
+      } catch {
+        // File might not exist, continue
+      }
     }
 
     // Delete from database

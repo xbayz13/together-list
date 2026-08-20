@@ -5,6 +5,7 @@ import { useState } from "react";
 type Props = {
   onAddActivity: () => void;
   onUploadPhoto: () => void;
+  onUploadVideo: () => void;
   playerActive?: boolean;
   mobilePlayerExpanded?: boolean;
 };
@@ -12,6 +13,7 @@ type Props = {
 export default function FloatingActionButton({
   onAddActivity,
   onUploadPhoto,
+  onUploadVideo,
   playerActive = false,
   mobilePlayerExpanded = false,
 }: Props) {
@@ -29,6 +31,11 @@ export default function FloatingActionButton({
   const handleUploadPhoto = () => {
     setIsExpanded(false);
     onUploadPhoto();
+  };
+
+  const handleUploadVideo = () => {
+    setIsExpanded(false);
+    onUploadVideo();
   };
 
   return (
@@ -60,6 +67,15 @@ export default function FloatingActionButton({
         >
           <span className="fab-child-icon">📸</span>
           <span className="fab-child-label">Foto</span>
+        </button>
+        <button
+          className="fab-child"
+          onClick={handleUploadVideo}
+          aria-label="Upload video"
+          style={{ animationDelay: "200ms" }}
+        >
+          <span className="fab-child-icon">🎬</span>
+          <span className="fab-child-label">Video</span>
         </button>
       </div>
 

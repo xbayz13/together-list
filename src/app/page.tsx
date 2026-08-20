@@ -14,6 +14,7 @@ import MovingClouds from "./components/MovingClouds";
 import PolaroidGallery from "./components/PolaroidGallery";
 import PolaroidLightbox from "./components/PolaroidLightbox";
 import PolaroidUploadModal from "./components/PolaroidUploadModal";
+import VideoUploadModal from "./components/VideoUploadModal";
 import MusicPlayer from "./components/MusicPlayer";
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
   const [allPolaroids, setAllPolaroids] = useState<PolaroidData[]>([]);
   const [selectedPolaroid, setSelectedPolaroid] = useState<PolaroidData | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showVideoUploadModal, setShowVideoUploadModal] = useState(false);
   const [polaroidRefreshKey, setPolaroidRefreshKey] = useState(0);
 
   // Music player state
@@ -184,6 +186,7 @@ export default function Home() {
         <FloatingActionButton
           onAddActivity={() => setModal({ mode: "add" })}
           onUploadPhoto={() => setShowUploadModal(true)}
+          onUploadVideo={() => setShowVideoUploadModal(true)}
           playerActive={playerActive}
           mobilePlayerExpanded={isMobileExpanded}
         />
@@ -209,6 +212,19 @@ export default function Home() {
             onSuccess={() => {
               setShowUploadModal(false);
               // Increment refreshKey to trigger gallery refetch
+              setPolaroidRefreshKey(k => k + 1);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Video Upload Modal */}
+      {showVideoUploadModal && (
+        <div className="relative" style={{ zIndex: 100 }}>
+          <VideoUploadModal
+            onClose={() => setShowVideoUploadModal(false)}
+            onSuccess={() => {
+              setShowVideoUploadModal(false);
               setPolaroidRefreshKey(k => k + 1);
             }}
           />

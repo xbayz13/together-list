@@ -27,10 +27,14 @@ model Activity {
 }
 
 model Polaroid {
-  id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(50)
-  imageUrl  String   @db.VarChar(500)
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(50)
+  imageUrl     String?  @db.VarChar(500)  // nullable — video type ga punya imageUrl
+  videoUrl     String?  @db.VarChar(500)  // TAMBAH — path ke video file
+  thumbnailUrl String?  @db.VarChar(500)  // TAMBAH — path ke thumbnail
+  duration     Float?                      // TAMBAH — durasi video (detik)
+  type         String   @default("photo") // "photo" | "video"
+  createdAt    DateTime @default(now())
 
   @@map("polaroids")
 }
