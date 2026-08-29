@@ -25,6 +25,7 @@ export default function PolaroidLightbox({
   const [videoDuration, setVideoDuration] = useState(0);
 
   const isVideo = polaroid.type === "video";
+  const isShortVideo = isVideo && (polaroid.duration ?? 0) < 5;
 
   // Reset when polaroid changes
   useEffect(() => {
@@ -80,8 +81,8 @@ export default function PolaroidLightbox({
           break;
         }
         case " ": {
-          // Space to toggle play/pause
-          if (isVideo && videoRef.current) {
+          // Space to toggle play/pause — skip untuk short video (looping terus)
+          if (isVideo && !isShortVideo && videoRef.current) {
             e.preventDefault();
             togglePlay();
           }
@@ -123,12 +124,12 @@ export default function PolaroidLightbox({
   };
 
   const handleTimeUpdate = () => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || isShortVideo) return;
     setVideoProgress(videoRef.current.currentTime);
   };
 
   const handleLoadedMetadata = () => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || isShortVideo) return;
     setVideoDuration(videoRef.current.duration);
   };
 
@@ -196,14 +197,19 @@ export default function PolaroidLightbox({
                   ref={videoRef}
                   src={polaroid.videoUrl || undefined}
                   className="polaroid-lightbox-video"
-                  onTimeUpdate={handleTimeUpdate}
-                  onLoadedMetadata={handleLoadedMetadata}
+                  autoPlay
+                  loop={isShortVideo}
+                  muted={isShortVideo}
+                  playsInline
+                  onTimeUpdate={isShortVideo ? undefined : handleTimeUpdate}
+                  onLoadedMetadata={isShortVideo ? undefined : handleLoadedMetadata}
                   onPlay={() => setIsPlaying(true)}
                   onPause={() => setIsPlaying(false)}
-                  onClick={togglePlay}
+                  onClick={isShortVideo ? undefined : togglePlay}
                 />
 
-                {/* Custom controls */}
+                {/* Custom controls — hanya untuk video >= 5 detik */}
+                {!isShortVideo && (
                 <div className="video-controls">
                   <button
                     className="video-controls-btn"
@@ -248,6 +254,7 @@ export default function PolaroidLightbox({
                     </svg>
                   </button>
                 </div>
+                )}
               </div>
             ) : (
               /* Photo */

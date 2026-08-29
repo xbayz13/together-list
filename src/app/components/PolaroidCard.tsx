@@ -9,6 +9,12 @@ type PolaroidCardProps = {
   onClick?: () => void;
 };
 
+const formatDuration = (seconds: number): string => {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
 export default function PolaroidCard({
   polaroid,
   rotation = 0,
@@ -16,6 +22,7 @@ export default function PolaroidCard({
 }: PolaroidCardProps) {
   const [imgError, setImgError] = useState(false);
   const isVideo = polaroid.type === "video";
+  const isLongVideo = isVideo && (polaroid.duration ?? 0) >= 5;
   const thumbnailSrc = isVideo
     ? polaroid.thumbnailUrl || polaroid.imageUrl
     : polaroid.imageUrl;
@@ -82,6 +89,11 @@ export default function PolaroidCard({
         </div>
         <div className="polaroid-caption">
           <span className="polaroid-title">{polaroid.title}</span>
+          {isLongVideo && polaroid.duration && (
+            <span className="polaroid-duration-badge">
+              {formatDuration(polaroid.duration)}
+            </span>
+          )}
         </div>
       </div>
     </div>
