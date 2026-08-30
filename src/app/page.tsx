@@ -16,6 +16,7 @@ import PolaroidLightbox from "./components/PolaroidLightbox";
 import PolaroidUploadModal from "./components/PolaroidUploadModal";
 import VideoUploadModal from "./components/VideoUploadModal";
 import MusicPlayer from "./components/MusicPlayer";
+import GiftBox from "./components/GiftBox";
 
 export default function Home() {
   const [activities, setActivities] = useState<ActivityData[]>([]);
@@ -249,6 +250,9 @@ export default function Home() {
           <Toast message={toast} onClose={() => setToast(null)} />
         </div>
       )}
+
+      {/* Gift Box — Hiyori's Day */}
+      <GiftBox onToast={(msg) => setToast(msg)} />
     </>
   );
 }
