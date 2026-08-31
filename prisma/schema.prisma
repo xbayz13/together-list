@@ -27,28 +27,52 @@ model Activity {
 }
 
 model Polaroid {
-  id           Int      @id @default(autoincrement())
-  title        String   @db.VarChar(50)
-  imageUrl     String?  @db.VarChar(500)  // nullable — video type ga punya imageUrl
-  videoUrl     String?  @db.VarChar(500)  // TAMBAH — path ke video file
-  thumbnailUrl String?  @db.VarChar(500)  // TAMBAH — path ke thumbnail
-  duration     Float?                      // TAMBAH — durasi video (detik)
-  type         String   @default("photo") // "photo" | "video"
-  createdAt    DateTime @default(now())
+  id             Int             @id @default(autoincrement())
+  title          String          @db.VarChar(50)
+  imageUrl       String?         @db.VarChar(500) // nullable — video type ga punya imageUrl
+  videoUrl       String?         @db.VarChar(500) // TAMBAH — path ke video file
+  thumbnailUrl   String?         @db.VarChar(500) // TAMBAH — path ke thumbnail
+  duration       Float? // TAMBAH — durasi video (detik)
+  type           String          @default("photo") // "photo" | "video"
+  createdAt      DateTime        @default(now())
+  birthdaySlides BirthdaySlide[]
 
   @@map("polaroids")
 }
 
 model Song {
-  id           Int      @id @default(autoincrement())
-  title        String   @db.VarChar(200)
-  artist       String   @db.VarChar(200)
-  videoId      String   @db.VarChar(20)
-  thumbnailUrl String   @db.VarChar(500)
-  duration     String?  @db.VarChar(10)
-  order        Int      @default(0)
-  createdAt    DateTime @default(now())
+  id              Int              @id @default(autoincrement())
+  title           String           @db.VarChar(200)
+  artist          String           @db.VarChar(200)
+  videoId         String           @db.VarChar(20)
+  thumbnailUrl    String           @db.VarChar(500)
+  duration        String?          @db.VarChar(10)
+  order           Int              @default(0)
+  createdAt       DateTime         @default(now())
+  birthdayConfigs BirthdayConfig[]
 
-  @@map("songs")
   @@unique([videoId])
+  @@map("songs")
+}
+
+model BirthdaySlide {
+  id        Int       @id @default(autoincrement())
+  type      String // "photo" | "message" | "banner"
+  content   String? // text untuk message
+  photoId   Int? // reference ke Polaroid.id
+  photo     Polaroid? @relation(fields: [photoId], references: [id], onDelete: SetNull)
+  order     Int // urutan slide
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("birthday_slides")
+}
+
+model BirthdayConfig {
+  id          Int      @id @default(1)
+  musicSongId Int? // reference ke Song.id
+  musicSong   Song?    @relation(fields: [musicSongId], references: [id], onDelete: SetNull)
+  updatedAt   DateTime @updatedAt
+
+  @@map("birthday_config")
 }

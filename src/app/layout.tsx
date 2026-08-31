@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito, Caveat } from "next/font/google";
+import { Nunito, Caveat, Playfair_Display, Poppins } from "next/font/google";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -10,6 +10,17 @@ const nunito = Nunito({
 const caveat = Caveat({
   subsets: ["latin"],
   variable: "--font-caveat",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "600"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -61,7 +72,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body className={`${nunito.variable} ${caveat.variable} font-sans bg-cream text-textMain antialiased`}>
+      <body className={`${nunito.variable} ${caveat.variable} ${playfair.variable} ${poppins.variable} font-sans bg-cream text-textMain antialiased`}>
         {children}
       </body>
     </html>

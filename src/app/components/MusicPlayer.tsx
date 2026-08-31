@@ -8,7 +8,7 @@ import type { SongData } from "../actions/songs";
 import { deleteSong } from "../actions/songs";
 import { fetchLyrics, type LyricsData } from "../actions/lyrics";
 
-// YouTube IFrame API types
+// YouTube IFrame API types are from @types/youtube
 type YTPlayer = {
   getDuration: () => number;
   getCurrentTime: () => number;
@@ -20,20 +20,6 @@ type YTPlayer = {
   setVolume: (vol: number) => void;
   destroy: () => void;
 };
-
-declare global {
-  interface Window {
-    YT: {
-      Player: new (elementId: string, config: Record<string, unknown>) => YTPlayer;
-      PlayerState: {
-        ENDED: number;
-        PLAYING: number;
-        PAUSED: number;
-      };
-    };
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
 
 type Props = {
   songs: SongData[];

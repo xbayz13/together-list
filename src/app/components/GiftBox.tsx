@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import "../birthday/giftbox.css";
 
@@ -12,6 +12,15 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [phase, setPhase] = useState<"idle" | "shaking" | "popping" | "fading">("idle");
+  const timersRef = useRef<number[]>([]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   // Date check — local time
   const getDateInfo = useCallback(() => {
@@ -45,17 +54,18 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
     }
 
     if (isSept2Plus) {
-      // Pop animation → fade to white → navigate
       setPhase("popping");
       document.body.style.overflow = "hidden";
 
-      setTimeout(() => {
-        setPhase("fading");
-      }, 400);
-
-      setTimeout(() => {
-        router.push("/birthday");
-      }, 900);
+      timersRef.current.push(
+        window.setTimeout(() => setPhase("fading"), 400)
+      );
+      timersRef.current.push(
+        window.setTimeout(() => {
+          document.body.style.overflow = "";
+          router.push("/birthday");
+        }, 900)
+      );
     }
   }, [getDateInfo, onToast, router]);
 
@@ -63,7 +73,6 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
 
   return (
     <>
-      {/* Fade to white overlay */}
       {phase === "fading" && <div className="gift-box-fade-overlay" />}
 
       <div
@@ -81,32 +90,17 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
           xmlns="http://www.w3.org/2000/svg"
           className="gift-box-svg"
         >
-          {/* Box body */}
           <rect x="8" y="24" width="40" height="28" rx="4" fill="#A8D8EA" />
           <rect x="8" y="24" width="40" height="28" rx="4" stroke="#7BB8CC" strokeWidth="1.5" />
-
-          {/* Box lid */}
           <rect x="5" y="18" width="46" height="10" rx="3" fill="#8EC5D6" />
           <rect x="5" y="18" width="46" height="10" rx="3" stroke="#7BB8CC" strokeWidth="1.5" />
-
-          {/* Vertical ribbon */}
           <rect x="25" y="18" width="6" height="34" fill="#F9E79F" />
           <rect x="25" y="18" width="6" height="34" stroke="#E8D44D" strokeWidth="0.5" />
-
-          {/* Horizontal ribbon on lid */}
           <rect x="5" y="21" width="46" height="4" fill="#F9E79F" />
           <rect x="5" y="21" width="46" height="4" stroke="#E8D44D" strokeWidth="0.5" />
-
-          {/* Bow left */}
           <ellipse cx="22" cy="16" rx="7" ry="5" fill="#F9E79F" stroke="#E8D44D" strokeWidth="1" transform="rotate(-15 22 16)" />
-
-          {/* Bow right */}
           <ellipse cx="34" cy="16" rx="7" ry="5" fill="#F9E79F" stroke="#E8D44D" strokeWidth="1" transform="rotate(15 34 16)" />
-
-          {/* Bow center knot */}
           <circle cx="28" cy="17" r="3" fill="#E8D44D" />
-
-          {/* Shine effect */}
           <rect x="14" y="28" width="3" height="8" rx="1.5" fill="rgba(255,255,255,0.4)" />
         </svg>
 

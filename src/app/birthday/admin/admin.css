@@ -1,0 +1,364 @@
+/* =======================
+   Birthday Admin Page
+   ======================= */
+
+.admin-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2D2D2D;
+  margin: 0;
+}
+
+/* =======================
+   Slide List
+   ======================= */
+
+.slide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.slide-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slide-item:hover {
+  border-color: #A8D8EA;
+  box-shadow: 0 2px 8px rgba(168, 216, 234, 0.2);
+}
+
+.slide-item.active {
+  border-color: #A8D8EA;
+  background: rgba(168, 216, 234, 0.05);
+}
+
+.slide-item.dragging {
+  opacity: 0.5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.drag-handle {
+  cursor: grab;
+  color: #9CA3AF;
+  font-size: 18px;
+  user-select: none;
+  padding: 4px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.slide-number {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  min-width: 20px;
+}
+
+.slide-icon {
+  font-size: 16px;
+}
+
+.slide-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.slide-info-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2D2D2D;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slide-info-sub {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+.slide-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.slide-delete {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.slide-delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+/* =======================
+   Add Buttons
+   ======================= */
+
+.add-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.add-btn {
+  flex: 1;
+  padding: 10px;
+  background: white;
+  border: 1.5px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.add-btn:hover {
+  border-color: #A8D8EA;
+  color: #2D2D2D;
+  background: rgba(168, 216, 234, 0.05);
+}
+
+/* =======================
+   Slide Editor
+   ======================= */
+
+.slide-editor {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.slide-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.slide-editor-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2D2D2D;
+  margin: 0;
+}
+
+.slide-editor-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.slide-editor-textarea:focus {
+  border-color: #A8D8EA;
+}
+
+.slide-editor-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* =======================
+   Music Picker
+   ======================= */
+
+.music-picker {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.music-picker-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2D2D2D;
+  margin: 0 0 12px;
+}
+
+.music-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.music-option:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.music-option input[type="radio"] {
+  accent-color: #A8D8EA;
+}
+
+.music-option-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-option-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #2D2D2D;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-option-artist {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+.music-empty {
+  font-size: 13px;
+  color: #9CA3AF;
+  text-align: center;
+  padding: 16px;
+}
+
+/* =======================
+   Photo Picker
+   ======================= */
+
+.photo-picker {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.photo-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.photo-picker-item {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.photo-picker-item:hover {
+  border-color: #A8D8EA;
+}
+
+.photo-picker-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =======================
+   Shared Buttons
+   ======================= */
+
+.btn-primary {
+  padding: 8px 16px;
+  background: #A8D8EA;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2D2D2D;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #8EC5D6;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.btn-preview {
+  width: 100%;
+  padding: 14px;
+  background: #A8D8EA;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2D2D2D;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-preview:hover {
+  background: #8EC5D6;
+}

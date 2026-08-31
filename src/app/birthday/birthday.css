@@ -1,0 +1,473 @@
+/* =======================
+   Birthday Surprise Page
+   ======================= */
+
+/* Background */
+.birthday-page {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #FFF8F0 0%,
+    #FFF0E6 30%,
+    #FFE8E0 60%,
+    #FFE0D6 100%
+  );
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* =======================
+   Story Container
+   ======================= */
+
+.story-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  overflow: hidden;
+}
+
+.story-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.story-slide.active {
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 1;
+}
+
+.story-slide.prev {
+  transform: translateX(-100%);
+  opacity: 0;
+  z-index: 0;
+}
+
+.story-slide.next {
+  transform: translateX(100%);
+  opacity: 0;
+  z-index: 0;
+}
+
+/* =======================
+   Slide Types
+   ======================= */
+
+/* Photo slide */
+.story-photo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.story-photo img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: photoFadeIn 0.4s ease-out;
+}
+
+@keyframes photoFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Photo layout: 2 vertical side-by-side */
+.story-photo-pair {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.story-photo-pair img {
+  max-width: 48%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: photoFadeIn 0.4s ease-out;
+}
+
+/* Photo placeholder */
+.story-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+/* Banner slide */
+.story-banner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: bannerFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.banner-ornament {
+  opacity: 0;
+  animation: ornamentFadeIn 0.6s ease-out 0.3s forwards;
+}
+
+.banner-ornament-top {
+  margin-bottom: 8px;
+}
+
+.banner-ornament-bottom {
+  margin-top: 8px;
+}
+
+.banner-cake {
+  opacity: 0;
+  animation: bannerPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.banner-title {
+  font-family: var(--font-poppins);
+  font-size: 20px;
+  font-weight: 300;
+  color: #9CA3AF;
+  margin: 0;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: bannerSlideUp 0.5s ease-out 0.4s forwards;
+}
+
+.banner-name {
+  font-family: var(--font-playfair);
+  font-size: 56px;
+  font-weight: 700;
+  color: #2D2D2D;
+  margin: 0;
+  line-height: 1.1;
+  opacity: 0;
+  animation: bannerSlideUp 0.5s ease-out 0.5s forwards;
+}
+
+.banner-subtitle {
+  font-family: var(--font-poppins);
+  font-size: 14px;
+  color: #9CA3AF;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 4px;
+  opacity: 0;
+  animation: bannerSlideUp 0.5s ease-out 0.6s forwards;
+}
+
+@media (min-width: 768px) {
+  .banner-title {
+    font-size: 24px;
+    letter-spacing: 8px;
+  }
+  .banner-name {
+    font-size: 72px;
+  }
+  .banner-subtitle {
+    font-size: 16px;
+  }
+}
+
+@keyframes bannerFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bannerPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bannerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ornamentFadeIn {
+  from {
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* =======================
+   Animated SVG Elements
+   ======================= */
+
+/* Flame flicker */
+.flame-outer {
+  animation: flameFlicker 0.8s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+.flame-mid {
+  animation: flameFlicker 0.6s ease-in-out 0.1s infinite alternate;
+  transform-origin: center bottom;
+}
+.flame-inner {
+  animation: flameFlicker 0.5s ease-in-out 0.2s infinite alternate;
+  transform-origin: center bottom;
+}
+.flame-glow {
+  animation: flameGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes flameFlicker {
+  0% { transform: scaleX(1) scaleY(1); opacity: 1; }
+  50% { transform: scaleX(0.85) scaleY(1.1); opacity: 0.9; }
+  100% { transform: scaleX(1.1) scaleY(0.9); opacity: 1; }
+}
+
+@keyframes flameGlow {
+  0% { opacity: 0.1; r: 7; }
+  50% { opacity: 0.25; r: 10; }
+  100% { opacity: 0.1; r: 7; }
+}
+
+/* Floating sparkles */
+.banner-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.sparkle {
+  position: absolute;
+  opacity: 0;
+  animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+.sparkle-1 { top: 15%; left: 10%; animation-delay: 0s; }
+.sparkle-2 { top: 25%; right: 12%; animation-delay: 0.8s; }
+.sparkle-3 { bottom: 30%; left: 18%; animation-delay: 1.6s; }
+.sparkle-4 { top: 40%; right: 20%; animation-delay: 0.4s; }
+.sparkle-5 { bottom: 20%; right: 8%; animation-delay: 1.2s; }
+
+@keyframes sparkleFloat {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 0.8; transform: translateY(-6px) scale(1); }
+  50% { opacity: 1; transform: translateY(-12px) scale(1.1); }
+  80% { opacity: 0.6; transform: translateY(-8px) scale(0.9); }
+}
+
+/* Ornament dot pulse */
+.ornament-dot-pulse {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { r: 4; opacity: 1; }
+  50% { r: 5.5; opacity: 0.7; }
+}
+
+/* Cake dots shimmer */
+.cake-dot {
+  animation: dotShimmer 2s ease-in-out infinite;
+}
+.cake-dot:nth-child(2) { animation-delay: 0.3s; }
+.cake-dot:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes dotShimmer {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Subtitle stars */
+.subtitle-star {
+  display: inline-block;
+  animation: starSpin 3s linear infinite;
+  color: #F9E79F;
+}
+
+@keyframes starSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Message slide */
+.story-message {
+  text-align: center;
+  padding: 32px;
+  max-width: 600px;
+}
+
+.story-message-text {
+  font-size: 20px;
+  font-weight: 500;
+  color: #2D2D2D;
+  line-height: 1.6;
+  min-height: 60px;
+}
+
+@media (min-width: 768px) {
+  .story-message-text {
+    font-size: 24px;
+  }
+}
+
+/* Typing cursor */
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #2D2D2D;
+  margin-left: 2px;
+  animation: cursorBlink 0.5s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* =======================
+   Dot Indicator
+   ======================= */
+
+.dot-indicator {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.dot {
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.dot.passed {
+  width: 8px;
+  height: 8px;
+  background: #A8D8EA;
+}
+
+.dot.current {
+  width: 12px;
+  height: 12px;
+  background: #A8D8EA;
+  transform: scale(1.2);
+}
+
+.dot.future {
+  width: 8px;
+  height: 8px;
+  background: #D1D5DB;
+}
+
+/* =======================
+   Close Button
+   ======================= */
+
+.birthday-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: rgba(107, 114, 128, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+  z-index: 20;
+}
+
+.birthday-close:hover {
+  color: rgba(107, 114, 128, 1);
+  transform: scale(1.1);
+}
+
+/* =======================
+   Music Toggle
+   ======================= */
+
+.birthday-music-toggle {
+  position: fixed;
+  bottom: 32px;
+  left: 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.birthday-music-toggle:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
