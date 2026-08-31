@@ -61,7 +61,7 @@ export default function BirthdayAdmin() {
     ]);
     setSlides(s);
     setMusicSongId(c.musicSongId);
-    setPolaroids(p.filter((po) => po.type === "photo" && po.imageUrl));
+    setPolaroids(p.filter((po) => (po.imageUrl || po.thumbnailUrl)));
     setSongs(sg);
     setLoading(false);
   }, []);
@@ -198,7 +198,7 @@ export default function BirthdayAdmin() {
       {showPhotoPicker && (
         <div className="photo-picker">
           <div className="slide-editor-header">
-            <h3 className="slide-editor-title">Pilih Foto</h3>
+            <h3 className="slide-editor-title">Pilih Media</h3>
             <button className="btn-secondary" onClick={() => setShowPhotoPicker(false)}>
               Batal
             </button>
@@ -210,12 +210,18 @@ export default function BirthdayAdmin() {
                 className="photo-picker-item"
                 onClick={() => handleSelectPhoto(p.id)}
               >
-                <img src={p.imageUrl || undefined} alt={p.title} />
+                <img
+                  src={p.thumbnailUrl || p.imageUrl || undefined}
+                  alt={p.title}
+                />
+                {p.type === "video" && (
+                  <span className="photo-picker-video-badge">▶</span>
+                )}
               </div>
             ))}
           </div>
           {polaroids.length === 0 && (
-            <p className="music-empty">Belum ada foto di polaroid gallery</p>
+            <p className="music-empty">Belum ada foto atau video di polaroid gallery</p>
           )}
         </div>
       )}

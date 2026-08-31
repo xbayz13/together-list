@@ -20,7 +20,9 @@ export default async function BirthdayPage() {
     id: slide.id,
     type: slide.type,
     content: slide.content,
-    photoUrl: slide.photo?.imageUrl || null,
+    photoUrl: slide.photo?.imageUrl || slide.photo?.thumbnailUrl || null,
+    videoUrl: slide.photo?.videoUrl || null,
+    duration: slide.photo?.duration || null,
     order: slide.order,
   }));
 

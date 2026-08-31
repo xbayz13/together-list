@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import TypingEffect from "./TypingEffect";
 
 type SlideData = {
@@ -8,6 +8,8 @@ type SlideData = {
   type: string;
   content: string | null;
   photoUrl: string | null;
+  videoUrl: string | null;
+  duration: number | null;
   order: number;
 };
 
@@ -19,10 +21,39 @@ type StorySlideProps = {
 
 export default function StorySlide({ slide, isActive, position }: StorySlideProps) {
   const [imgError, setImgError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Play/pause video based on active state
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (isActive) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+    }
+  }, [isActive]);
 
   const renderContent = () => {
     switch (slide.type) {
       case "photo":
+        // Video slide
+        if (slide.videoUrl) {
+          const isShortVideo = (slide.duration ?? 0) < 5;
+          return (
+            <div className="story-photo">
+              <video
+                ref={videoRef}
+                src={slide.videoUrl}
+                className="story-video"
+                loop={isShortVideo}
+                muted={isShortVideo}
+                playsInline
+                controls={!isShortVideo}
+              />
+            </div>
+          );
+        }
+        // Photo slide
         if (!slide.photoUrl || imgError) {
           return (
             <div className="story-photo">

@@ -22,6 +22,7 @@ type SlideItem = {
   content: string | null;
   photoId: number | null;
   photoUrl: string | null;
+  videoUrl: string | null;
   order: number;
 };
 
@@ -57,12 +58,16 @@ function SortableSlide({
     transition,
   };
 
-  const icon = slide.type === "photo" ? "📸" : slide.type === "banner" ? "🎂" : "💬";
+  const icon = slide.type === "photo"
+    ? (slide.videoUrl ? "🎬" : "📸")
+    : slide.type === "banner" ? "🎂" : "💬";
   const label =
     slide.type === "banner"
       ? "Happy Birthday Hiyori!"
       : slide.type === "message"
       ? slide.content || "(kosong)"
+      : slide.videoUrl
+      ? "Video"
       : slide.photoUrl
       ? "Foto"
       : "(kosong)";

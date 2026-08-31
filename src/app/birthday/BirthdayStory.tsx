@@ -13,6 +13,8 @@ type SlideData = {
   type: string;
   content: string | null;
   photoUrl: string | null;
+  videoUrl: string | null;
+  duration: number | null;
   order: number;
 };
 

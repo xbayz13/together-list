@@ -14,6 +14,7 @@ export type BirthdaySlideData = {
   content: string | null;
   photoId: number | null;
   photoUrl: string | null;
+  videoUrl: string | null;
   order: number;
 };
 
@@ -37,6 +38,7 @@ export async function getBirthdaySlides(): Promise<BirthdaySlideData[]> {
     content: s.content,
     photoId: s.photoId,
     photoUrl: s.photo?.imageUrl || null,
+    videoUrl: s.photo?.videoUrl || null,
     order: s.order,
   }));
 }
@@ -73,6 +75,7 @@ export async function createBirthdaySlide(
         content: slide.content,
         photoId: slide.photoId,
         photoUrl: slide.photo?.imageUrl || null,
+        videoUrl: slide.photo?.videoUrl || null,
         order: slide.order,
       },
     };
