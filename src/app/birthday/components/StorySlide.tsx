@@ -21,6 +21,7 @@ type StorySlideProps = {
 
 export default function StorySlide({ slide, isActive, position }: StorySlideProps) {
   const [imgError, setImgError] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Play/pause video based on active state
@@ -32,6 +33,21 @@ export default function StorySlide({ slide, isActive, position }: StorySlideProp
       videoRef.current.pause();
     }
   }, [isActive]);
+
+  // Reset mute when slide changes
+  useEffect(() => {
+    setVideoMuted(true);
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+    }
+  }, [slide.id]);
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    const newMuted = !videoMuted;
+    videoRef.current.muted = newMuted;
+    setVideoMuted(newMuted);
+  };
 
   const renderContent = () => {
     switch (slide.type) {
@@ -46,10 +62,20 @@ export default function StorySlide({ slide, isActive, position }: StorySlideProp
                 src={slide.videoUrl}
                 className="story-video"
                 loop={isShortVideo}
-                muted={isShortVideo}
+                muted
                 playsInline
                 controls={!isShortVideo}
               />
+              {/* Unmute button for regular videos */}
+              {!isShortVideo && (
+                <button
+                  className="video-unmute-btn"
+                  onClick={(e) => { e.stopPropagation(); toggleMute(); }}
+                  aria-label={videoMuted ? "Unmute" : "Mute"}
+                >
+                  {videoMuted ? "🔇" : "🔊"}
+                </button>
+              )}
             </div>
           );
         }
