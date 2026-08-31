@@ -29,6 +29,7 @@ export default function BirthdayPage({ slides, musicVideoId }: BirthdayPageProps
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchStartTime, setTouchStartTime] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const swipedRef = useRef(false);
 
   const sortedSlides = useMemo(() => [...slides].sort((a, b) => a.order - b.order), [slides]);
 
@@ -61,6 +62,8 @@ export default function BirthdayPage({ slides, musicVideoId }: BirthdayPageProps
 
       const isSwipe = Math.abs(deltaX) > 50 || velocity > 0.5;
       if (isSwipe) {
+        swipedRef.current = true;
+        setTimeout(() => { swipedRef.current = false; }, 400);
         if (deltaX < 0) nextSlide();
         else prevSlide();
       }
@@ -73,6 +76,7 @@ export default function BirthdayPage({ slides, musicVideoId }: BirthdayPageProps
   // Click handlers (tap left/right half)
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
+      if (swipedRef.current) return;
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const isRightHalf = x > rect.width / 2;

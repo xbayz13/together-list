@@ -42,8 +42,10 @@ export default function TypingEffect({
     };
   }, [isActive, text, speed]);
 
+  const isShortText = text.length < 30;
+
   return (
-    <span className="story-message-text">
+    <span className={`story-message-text ${isShortText ? "text-center" : "text-left"}`}>
       {displayText}
       {isActive && displayText.length < text.length && (
         <span className="typing-cursor" />

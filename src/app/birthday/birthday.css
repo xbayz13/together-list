@@ -81,6 +81,15 @@
   animation: photoFadeIn 0.4s ease-out;
 }
 
+/* Video controls should not capture swipe gestures */
+.story-video::-webkit-media-controls-panel {
+  touch-action: manipulation;
+}
+
+.story-video::-webkit-media-controls-overlay-play-button {
+  touch-action: manipulation;
+}
+
 @keyframes photoFadeIn {
   from {
     opacity: 0;
@@ -339,7 +348,6 @@
 
 /* Message slide */
 .story-message {
-  text-align: center;
   padding: 32px;
   max-width: 600px;
 }
@@ -350,6 +358,14 @@
   color: #2D2D2D;
   line-height: 1.6;
   min-height: 60px;
+}
+
+.story-message-text.text-center {
+  text-align: center;
+}
+
+.story-message-text.text-left {
+  text-align: left;
 }
 
 @media (min-width: 768px) {

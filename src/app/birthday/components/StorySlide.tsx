@@ -170,7 +170,7 @@ export default function StorySlide({ slide, isActive, position }: StorySlideProp
             <TypingEffect
               text={slide.content || ""}
               isActive={isActive}
-              speed={50}
+              speed={(slide.content?.length ?? 0) < 30 ? 110 : 50}
             />
           </div>
         );
