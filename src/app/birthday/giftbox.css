@@ -1,9 +1,9 @@
 /* =======================
-   Gift Box — Hiyori's Day
+   Gift Box — Opening Transition
    ======================= */
 
-/* Positioning */
-.gift-box {
+/* Wrapper — fixed position, z-index above everything */
+.gift-box-wrapper {
   position: fixed;
   top: 20px;
   right: 24px;
@@ -13,30 +13,19 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  animation: giftBoxFloat 3s ease-in-out infinite;
-  transition: transform 0.2s ease;
+  transition: filter 0.2s ease;
 }
 
-.gift-box:hover {
-  transform: scale(1.08);
+.gift-box-wrapper:hover {
+  filter: brightness(1.05);
 }
 
-.gift-box:active {
-  transform: scale(0.95);
-}
-
-/* Mobile: status bar safe */
+/* Mobile */
 @media (max-width: 767px) {
-  .gift-box {
+  .gift-box-wrapper {
     top: 56px;
     right: 16px;
   }
-}
-
-/* SVG */
-.gift-box-svg {
-  filter: drop-shadow(0 2px 8px rgba(168, 216, 234, 0.5));
-  animation: giftGlow 2s ease-in-out infinite;
 }
 
 /* Label */
@@ -53,86 +42,216 @@
 }
 
 /* =======================
-   Animations
+   3D Gift Box Structure
    ======================= */
 
-/* Float animation — gentle bob */
-@keyframes giftBoxFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-6px);
+.gift-box-3d {
+  perspective: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-style: preserve-3d;
+}
+
+@media (max-width: 767px) {
+  .gift-box-3d {
+    perspective: 600px;
   }
 }
 
-/* Glow pulse */
-@keyframes giftGlow {
-  0%, 100% {
-    filter: drop-shadow(0 2px 8px rgba(168, 216, 234, 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 4px 16px rgba(168, 216, 234, 0.7));
-  }
+/* Lid — rotates open from top */
+.gift-lid {
+  transform-origin: top center;
+  transition: transform 0.3s ease-out;
+  z-index: 2;
 }
 
-/* Shaking — Sept 1 */
-.gift-box.shaking {
-  animation: giftBoxShake 0.6s ease-in-out infinite;
+.gift-lid-open {
+  transform: rotateX(-120deg);
 }
 
-@keyframes giftBoxShake {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  20% {
-    transform: translateY(-4px) rotate(-5deg);
-  }
-  40% {
-    transform: translateY(-2px) rotate(5deg);
-  }
-  60% {
-    transform: translateY(-4px) rotate(-3deg);
-  }
-  80% {
-    transform: translateY(-2px) rotate(3deg);
-  }
+/* Body */
+.gift-body {
+  margin-top: -1px;
+  z-index: 1;
 }
 
-/* Popping — tap Sept 2+ */
-.gift-box.popping {
-  animation: giftBoxPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* =======================
+   Phase 1: Shake (Sept 1 loop)
+   ======================= */
+
+.gift-shake-loop {
+  animation: giftShakeLoop 0.6s ease-in-out infinite;
 }
 
-@keyframes giftBoxPop {
+@keyframes giftShakeLoop {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  20% { transform: translateY(-4px) rotate(-5deg); }
+  40% { transform: translateY(-2px) rotate(5deg); }
+  60% { transform: translateY(-4px) rotate(-3deg); }
+  80% { transform: translateY(-2px) rotate(3deg); }
+}
+
+/* Phase 1: Shake 3x (Sept 2+ tap) */
+.gift-phase-shake {
+  animation: giftShakeOnce 0.5s ease-in-out;
+}
+
+@keyframes giftShakeOnce {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(5deg); }
+}
+
+/* =======================
+   Phase 2: Scale Up
+   ======================= */
+
+.gift-phase-scale {
+  animation: giftScaleUp 0.3s ease-in-out forwards;
+}
+
+@keyframes giftScaleUp {
   0% {
+    top: 20px;
+    right: 24px;
     transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 1;
   }
   100% {
-    transform: scale(0);
-    opacity: 0;
+    top: 50%;
+    right: auto;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(2.5);
   }
 }
 
-/* Fade to white overlay */
-.gift-box-fade-overlay {
+@media (max-width: 767px) {
+  .gift-phase-scale {
+    animation: giftScaleUpMobile 0.3s ease-in-out forwards;
+  }
+
+  @keyframes giftScaleUpMobile {
+    0% {
+      top: 56px;
+      right: 16px;
+      transform: scale(1);
+    }
+    100% {
+      top: 50%;
+      right: auto;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(2);
+    }
+  }
+}
+
+/* =======================
+   Phase 3: Open (lid handled via .gift-lid-open)
+   ======================= */
+
+/* Phase 3 keeps scale from phase 2 */
+.gift-phase-open {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%) scale(2.5);
+}
+
+@media (max-width: 767px) {
+  .gift-phase-open {
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+/* =======================
+   Phase 4: Glow
+   ======================= */
+
+.gift-phase-glow {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%) scale(2.5);
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@media (max-width: 767px) {
+  .gift-phase-glow {
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+/* =======================
+   Glow Overlay
+   ======================= */
+
+.gift-glow-overlay {
   position: fixed;
-  inset: 0;
-  background: white;
-  z-index: 9999;
-  animation: fadeInWhite 0.5s ease-in forwards;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #FFF8F0 0%,
+    #FFF0E6 40%,
+    #FFE8E0 70%,
+    transparent 100%
+  );
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 59;
 }
 
-@keyframes fadeInWhite {
-  from {
+.gift-glow-overlay.active {
+  animation: glowExpand 0.4s ease-out forwards;
+}
+
+@media (max-width: 767px) {
+  .gift-glow-overlay {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@keyframes glowExpand {
+  0% {
     opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
   }
-  to {
+  50% {
+    opacity: 0.8;
+  }
+  100% {
     opacity: 1;
+    transform: translate(-50%, -50%) scale(4);
   }
+}
+
+/* =======================
+   Float animation (idle)
+   ======================= */
+
+.gift-phase-idle .gift-box-3d {
+  animation: giftBoxFloat 3s ease-in-out infinite;
+}
+
+@keyframes giftBoxFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Glow pulse on SVG (idle) */
+.gift-phase-idle .gift-body svg {
+  animation: giftGlowPulse 2s ease-in-out infinite;
+}
+
+@keyframes giftGlowPulse {
+  0%, 100% { filter: drop-shadow(0 2px 8px rgba(168, 216, 234, 0.4)); }
+  50% { filter: drop-shadow(0 4px 16px rgba(168, 216, 234, 0.7)); }
 }
