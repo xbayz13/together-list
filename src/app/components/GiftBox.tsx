@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import "../birthday/giftbox.css";
 
@@ -8,7 +8,7 @@ type GiftBoxProps = {
   onToast?: (message: string) => void;
 };
 
-type Phase = "idle" | "shake" | "scale" | "open" | "glow" | "done";
+type Phase = "idle" | "shake" | "scale" | "open" | "glow";
 
 export default function GiftBox({ onToast }: GiftBoxProps) {
   const router = useRouter();
@@ -16,12 +16,17 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [isAnimating, setIsAnimating] = useState(false);
   const timersRef = useRef<number[]>([]);
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       timersRef.current.forEach(clearTimeout);
       document.body.style.overflow = "";
+      if (audioCtxRef.current) {
+        audioCtxRef.current.close().catch(() => {});
+        audioCtxRef.current = null;
+      }
     };
   }, []);
 
@@ -39,22 +44,33 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
     };
   }, []);
 
+  const dateInfo = useMemo(() => getDateInfo(), [getDateInfo]);
+
   // Show/hide based on date
   useEffect(() => {
-    const { isBeforeSept1, isSept4Plus, isSept1 } = getDateInfo();
-    if (!isBeforeSept1 && !isSept4Plus) {
+    if (!dateInfo.isBeforeSept1 && !dateInfo.isSept4Plus) {
       setVisible(true);
-      if (isSept1) {
+      if (dateInfo.isSept1) {
         setPhase("shake");
       }
     }
-  }, [getDateInfo]);
+  }, [dateInfo]);
+
+  // Get or create AudioContext (reuse, no leak)
+  const getAudioCtx = useCallback(() => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new AudioContext();
+    }
+    if (audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  }, []);
 
   // Sound: rich pop (layered oscillators)
   const playPop = useCallback(() => {
     try {
-      const ctx = new AudioContext();
-      if (ctx.state === "suspended") ctx.resume();
+      const ctx = getAudioCtx();
       const t = ctx.currentTime;
 
       // Layer 1: low thump
@@ -83,7 +99,7 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
       osc2.start(t);
       osc2.stop(t + 0.06);
 
-      // Layer 3: noise burst (using high-freq oscillator)
+      // Layer 3: noise burst
       const osc3 = ctx.createOscillator();
       const gain3 = ctx.createGain();
       osc3.type = "triangle";
@@ -96,13 +112,12 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
       osc3.start(t);
       osc3.stop(t + 0.04);
     } catch { /* silent */ }
-  }, []);
+  }, [getAudioCtx]);
 
   // Sound: cinematic whoosh (rising sweep + shimmer)
   const playWhoosh = useCallback(() => {
     try {
-      const ctx = new AudioContext();
-      if (ctx.state === "suspended") ctx.resume();
+      const ctx = getAudioCtx();
       const t = ctx.currentTime;
 
       // Layer 1: rising sweep
@@ -119,7 +134,7 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
       osc1.start(t);
       osc1.stop(t + 0.35);
 
-      // Layer 2: shimmer (high sine)
+      // Layer 2: shimmer
       const osc2 = ctx.createOscillator();
       const gain2 = ctx.createGain();
       osc2.type = "sine";
@@ -146,7 +161,7 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
       osc3.start(t);
       osc3.stop(t + 0.35);
     } catch { /* silent */ }
-  }, []);
+  }, [getAudioCtx]);
 
   const schedule = useCallback((fn: () => void, delay: number) => {
     timersRef.current.push(window.setTimeout(fn, delay));
@@ -155,14 +170,12 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
   const handleClick = useCallback(async () => {
     if (isAnimating) return;
 
-    const { isSept1, isSept2Plus } = getDateInfo();
-
-    if (isSept1) {
+    if (dateInfo.isSept1) {
       onToast?.("Sabar ya! 🤫");
       return;
     }
 
-    if (!isSept2Plus) return;
+    if (!dateInfo.isSept2Plus) return;
 
     setIsAnimating(true);
 
@@ -181,38 +194,43 @@ export default function GiftBox({ onToast }: GiftBoxProps) {
     setPhase("shake");
     playPop();
 
-    // Phase 2: Scale up + Whoosh (700ms)
+    // Phase 2: Scale up + Whoosh (700-1400ms)
     schedule(() => {
       setPhase("scale");
       playWhoosh();
     }, 700);
 
-    // Phase 3: Open lid (1100ms)
-    schedule(() => setPhase("open"), 1100);
+    // Phase 3: Open lid (1400-1900ms)
+    schedule(() => setPhase("open"), 1400);
 
-    // Phase 4: Glow (1600ms)
-    schedule(() => setPhase("glow"), 1600);
+    // Phase 4: Glow + Navigate (1900-2700ms)
+    schedule(() => setPhase("glow"), 1900);
 
-    // Phase 5: Navigate (2400ms)
     schedule(() => {
       document.body.style.overflow = "";
       router.replace("/birthday");
-    }, 2400);
-  }, [isAnimating, getDateInfo, onToast, playPop, playWhoosh, schedule, router]);
+    }, 2700);
+  }, [isAnimating, dateInfo, onToast, playPop, playWhoosh, schedule, router]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
 
   if (!visible) return null;
-
-  const isSept1 = getDateInfo().isSept1;
 
   return (
     <>
       {/* Glow overlay */}
-      <div className={`gift-glow-overlay ${phase === "glow" || phase === "done" ? "active" : ""}`} />
+      <div className={`gift-glow-overlay ${phase === "glow" ? "active" : ""}`} />
 
       {/* Gift box wrapper */}
       <div
-        className={`gift-box-wrapper gift-phase-${phase} ${isSept1 && phase === "idle" ? "gift-shake-loop" : ""}`}
+        className={`gift-box-wrapper gift-phase-${phase} ${dateInfo.isSept1 && phase === "idle" ? "gift-shake-loop" : ""}`}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
         aria-label="Gift box"
