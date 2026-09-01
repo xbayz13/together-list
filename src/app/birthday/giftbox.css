@@ -62,12 +62,12 @@
 /* Lid — rotates open from top */
 .gift-lid {
   transform-origin: top center;
-  transition: transform 0.3s ease-out;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 2;
 }
 
 .gift-lid-open {
-  transform: rotateX(-120deg);
+  transform: rotateX(-130deg) rotateY(8deg);
 }
 
 /* Body */
@@ -94,15 +94,17 @@
 
 /* Phase 1: Shake 3x (Sept 2+ tap) */
 .gift-phase-shake {
-  animation: giftShakeOnce 0.5s ease-in-out;
+  animation: giftShakeOnce 0.7s ease-in-out;
 }
 
 @keyframes giftShakeOnce {
   0%, 100% { transform: rotate(0deg); }
-  20% { transform: rotate(-8deg); }
-  40% { transform: rotate(8deg); }
-  60% { transform: rotate(-5deg); }
-  80% { transform: rotate(5deg); }
+  15% { transform: rotate(-10deg); }
+  30% { transform: rotate(10deg); }
+  45% { transform: rotate(-7deg); }
+  60% { transform: rotate(7deg); }
+  75% { transform: rotate(-4deg); }
+  90% { transform: rotate(4deg); }
 }
 
 /* =======================
@@ -110,7 +112,7 @@
    ======================= */
 
 .gift-phase-scale {
-  animation: giftScaleUp 0.3s ease-in-out forwards;
+  animation: giftScaleUp 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 @keyframes giftScaleUp {
@@ -120,16 +122,15 @@
     transform: scale(1);
   }
   100% {
-    top: 50%;
-    right: auto;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(2.5);
+    top: calc(50vh - 28px);
+    right: calc(50vw - 28px);
+    transform: scale(2.5);
   }
 }
 
 @media (max-width: 767px) {
   .gift-phase-scale {
-    animation: giftScaleUpMobile 0.3s ease-in-out forwards;
+    animation: giftScaleUpMobile 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   }
 
   @keyframes giftScaleUpMobile {
@@ -139,10 +140,9 @@
       transform: scale(1);
     }
     100% {
-      top: 50%;
-      right: auto;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(2);
+      top: calc(50vh - 28px);
+      right: calc(50vw - 28px);
+      transform: scale(2);
     }
   }
 }
@@ -151,17 +151,15 @@
    Phase 3: Open (lid handled via .gift-lid-open)
    ======================= */
 
-/* Phase 3 keeps scale from phase 2 */
 .gift-phase-open {
-  top: 50%;
-  left: 50%;
-  right: auto;
-  transform: translate(-50%, -50%) scale(2.5);
+  top: calc(50vh - 28px);
+  right: calc(50vw - 28px);
+  transform: scale(2.5);
 }
 
 @media (max-width: 767px) {
   .gift-phase-open {
-    transform: translate(-50%, -50%) scale(2);
+    transform: scale(2);
   }
 }
 
@@ -170,66 +168,87 @@
    ======================= */
 
 .gift-phase-glow {
-  top: 50%;
-  left: 50%;
-  right: auto;
-  transform: translate(-50%, -50%) scale(2.5);
+  top: calc(50vh - 28px);
+  right: calc(50vw - 28px);
+  transform: scale(2.5);
   opacity: 0;
-  transition: opacity 0.3s ease-out;
+  transition: opacity 0.5s ease-out;
 }
 
 @media (max-width: 767px) {
   .gift-phase-glow {
-    transform: translate(-50%, -50%) scale(2);
+    transform: scale(2);
   }
 }
 
 /* =======================
-   Glow Overlay
+   Glow Overlay — Multi-layer
    ======================= */
 
 .gift-glow-overlay {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 59;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+
+/* Inner glow */
+.gift-glow-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    #FFF8F0 0%,
-    #FFF0E6 40%,
-    #FFE8E0 70%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 248, 240, 0.8) 30%,
+    rgba(255, 240, 230, 0.5) 60%,
     transparent 100%
   );
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 59;
+}
+
+/* Outer soft haze */
+.gift-glow-overlay::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 232, 224, 0.4) 0%,
+    rgba(255, 224, 214, 0.2) 50%,
+    transparent 100%
+  );
 }
 
 .gift-glow-overlay.active {
-  animation: glowExpand 0.4s ease-out forwards;
+  animation: glowExpand 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @media (max-width: 767px) {
   .gift-glow-overlay {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
   }
 }
 
 @keyframes glowExpand {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3);
+    transform: translate(-50%, -50%) scale(0.2);
   }
-  50% {
-    opacity: 0.8;
+  30% {
+    opacity: 0.6;
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(4);
+    transform: translate(-50%, -50%) scale(5);
   }
 }
 

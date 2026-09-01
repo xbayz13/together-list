@@ -16,6 +16,12 @@
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+  animation: birthdayPageEnter 0.6s ease-out;
+}
+
+@keyframes birthdayPageEnter {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* =======================
